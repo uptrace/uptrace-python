@@ -1,5 +1,7 @@
 # Uptrace Python exporter for OpenTelemetry
 
+[![Build Status](https://travis-ci.org/uptrace/uptrace-python.svg?branch=master)](https://travis-ci.org/uptrace/uptrace-python)
+
 ## Installation
 
 ```bash
