@@ -80,7 +80,7 @@ span.add_event("log", {
 ## Span exporter
 
 Span exporter exports spans to Uptrace.dev backend. To configure span exporter
-add the following code to your main file (for Django it is manage.py):
+add the following code to your main file (manage.py for Django):
 
 ```python
 from opentelemetry import trace
@@ -143,13 +143,69 @@ Install psycopg instrumentation extension:
 pip install opentelemetry-ext-psycopg2
 ```
 
-Update your main file (for Django it is manage.py):
+Update your main file (manage.py for Django):
 
 ```python
 from opentelemetry.ext.psycopg2 import Psycopg2Instrumentor
 
 if __name__ == "__main__":
     Psycopg2Instrumentor().instrument()
+
+    ...
+```
+
+## Instrumenting MySQL
+
+### Using pymysql
+
+`pymysql` is a Python3 compatible replacement for `mysql-python`.
+
+```bash
+pip install PyMySQL
+```
+
+To use it with libraries that expect `mysql-python`, add the following to your
+main file (manage.py for Django):
+
+```python
+import pymysql
+
+pymysql.install_as_MySQLdb()
+```
+
+Install `opentelemetry-ext-pymysql` that instruments `mysql-connector-python`:
+
+```bash
+pip install opentelemetry-ext-pymysql
+```
+
+Update your main file (manage.py for Django):
+
+```python
+from opentelemetry.ext.pymysql import PyMySQLInstrumentor
+
+if __name__ == "__main__":
+    PyMySQLInstrumentor().instrument()
+
+    ...
+```
+
+### Using mysql-connector-python
+
+Install `opentelemetry-ext-mysql` that instruments `mysql-connector-python`:
+
+```bash
+pip install mysql-connector-python
+pip install opentelemetry-ext-mysql
+```
+
+Update your main file (manage.py for Django):
+
+```python
+from opentelemetry.ext.mysql import MySQLInstrumentor
+
+if __name__ == "__main__":
+    MySQLInstrumentor().instrument()
 
     ...
 ```
