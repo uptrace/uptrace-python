@@ -20,7 +20,7 @@ Briefly the process is the following:
 - Uptrace.dev uses that information to help you pinpoint failures and find
   performance bottlenecks.
 
-## Code instrumentation
+## Instrumenting code
 
 You instrument your application by wrapping potentially interesting operations
 with spans. Each span has:
@@ -96,7 +96,7 @@ trace.get_tracer_provider().add_span_processor(uptrace.trace.span_processor(
 ))
 ```
 
-## Django instrumentation
+## Instrumenting Django
 
 Install Django instrumentation extension:
 
@@ -122,4 +122,34 @@ from opentelemetry.ext.django import DjangoInstrumentor
 if __name__ == "__main__":
     # Instrument Django by adding middleware etc.
     DjangoInstrumentor().instrument()
+
+    ...
+```
+
+Run the server:
+
+```bash
+export OPENTELEMETRY_PYTHON_DJANGO_INSTRUMENT=True
+export DJANGO_SETTINGS_MODULE=app_name.settings
+
+./manage.py runserver
+```
+
+## Instrumenting PostgreSQL psycopg2
+
+Install psycopg instrumentation extension:
+
+```bash
+pip install opentelemetry-ext-psycopg2
+```
+
+Update your main file (for Django it is manage.py):
+
+```python
+from opentelemetry.ext.psycopg2 import Psycopg2Instrumentor
+
+if __name__ == "__main__":
+    Psycopg2Instrumentor().instrument()
+
+    ...
 ```
