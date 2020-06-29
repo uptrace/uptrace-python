@@ -1,3 +1,4 @@
+files: "*.md"
 semi: false
 singleQuote: true
 proseWrap: always
