@@ -1,3 +1,5 @@
+"""Uptrace client for Python"""
+
 import typing
 
 from opentelemetry import trace
@@ -7,10 +9,12 @@ from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from .trace import Exporter
 
 
-dummy_span_name = "__dummy__"
+DUMMY_SPAN_NAME = "__dummy__"
 
 
 class Client:
+    """Uptrace client for Python"""
+
     def __init__(self, **cfg):
         self._cfg = cfg
 
@@ -32,15 +36,19 @@ class Client:
         self._tracer = self.get_tracer("github.com/uptrace/uptrace-python")
 
     def close(self) -> None:
+        """Closes the client releasing associated resources"""
         self._bsp.shutdown()
 
-    def add_filter(self, filter_fn: typing.Callable):
+    def add_span_filter(self, filter_fn: typing.Callable):
+        """Adds a filter function that filters span data"""
         self._cfg["filters"].append(filter_fn)
 
     def get_tracer(self, *args, **kwargs) -> "Tracer":  # pylint:disable=no-self-use
+        """Shortcut for trace.get_tracer"""
         return trace.get_tracer(*args, **kwargs)
 
-    def get_current_span(self) -> "trace.Span":
+    def get_current_span(self) -> "trace.Span":  # pylint:disable=no-self-use
+        """Shortcut for trace.get_current_span"""
         return trace.get_current_span()
 
     def report_exception(self, exc: Exception) -> None:
@@ -51,6 +59,6 @@ class Client:
             span.record_exception(exc)
             return
 
-        span = self._tracer.start_span(dummy_span_name)
+        span = self._tracer.start_span(DUMMY_SPAN_NAME)
         span.record_exception(exc)
         span.end()

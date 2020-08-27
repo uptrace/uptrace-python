@@ -1,7 +1,7 @@
 .PHONY: all test
 
 lint:
-	pylint src/
+	pylint src/uptrace/
 
 test: lint
 	PYTHONPATH=src pytest

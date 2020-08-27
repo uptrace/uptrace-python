@@ -3,33 +3,20 @@
 import uptrace
 
 # Set dsn or UPTRACE_DSN env var.
-client = uptrace.Client(dsn="")
+upclient = uptrace.Client(dsn="")
 
-client.report_exception(ValueError("Hello from uptrace-python"))
+upclient.report_exception(ValueError("Hello from uptrace-python"))
 
-tracer = client.get_tracer(__name__)
+tracer = upclient.get_tracer(__name__)
 
 with tracer.start_as_current_span("main span"):
     with tracer.start_as_current_span("child1") as span:
         span.set_attribute("key1", "value1")
-        span.add_event(
-            "log",
-            {
-                "log.severity": "error",
-                "log.message": "User not found",
-                "enduser.id": "123",
-            },
-        )
+        span.add_event("event-name", {"foo": "bar"})
 
     with tracer.start_as_current_span("child2") as span:
         span.set_attribute("key2", "value2")
-        span.add_event(
-            "log",
-            {
-                "log.severity": "error",
-                "log.message": "User not found",
-                "enduser.id": "321",
-            },
-        )
+        span.add_event("event-name", {"foo": "baz"})
 
-client.close()
+# Flush and close the client.
+upclient.close()
