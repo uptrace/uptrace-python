@@ -4,6 +4,9 @@ import uptrace
 
 # Set dsn or UPTRACE_DSN env var.
 client = uptrace.Client(dsn="")
+
+client.report_exception(ValueError("Hello from uptrace-python"))
+
 tracer = client.get_tracer(__name__)
 
 with tracer.start_as_current_span("main span"):

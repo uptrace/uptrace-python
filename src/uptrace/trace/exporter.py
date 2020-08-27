@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
     """Uptrace span exporter for OpenTelemetry."""
 
-    def __init__(self, *args, dsn="", disabled=False, **kwargs):
+    def __init__(self, dsn="", disabled=False, **_kwargs):
         self._done = False
 
         if disabled:
