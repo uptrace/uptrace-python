@@ -1,5 +1,5 @@
 """Uptrace exporter for OpenTelemetry"""
 
-from . import trace
+from .client import Client
 
-__all__ = ["trace"]
+__all__ = ["Client"]

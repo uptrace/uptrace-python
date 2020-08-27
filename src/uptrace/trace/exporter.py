@@ -11,8 +11,8 @@ import requests
 from opentelemetry import trace as trace_api
 from opentelemetry.sdk import trace as trace_sdk
 from opentelemetry.sdk.trace import export as sdk
-from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from opentelemetry.sdk.util import BoundedDict
+
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
     """Uptrace span exporter for OpenTelemetry."""
 
-    def __init__(self, dsn="", disabled=False):
+    def __init__(self, *args, dsn="", disabled=False, **kwargs):
         self._done = False
 
         if disabled:
@@ -34,7 +34,7 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
 
         o = urlparse(dsn)  # pylint:disable=invalid-name
         if not o.scheme:
-            raise ValueError(f"can't parse dsn: {o.scheme}")
+            raise ValueError(f"can't parse dsn: {dsn}")
 
         host = o.hostname
         if o.port:
@@ -79,17 +79,6 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
         resp = requests.post(self._endpoint, data=payload, headers=self._headers)
         if resp.status_code < 200 or resp.status_code >= 300:
             logger.error("%d: %s", resp.status_code, resp.text)
-
-
-def span_processor(**kwargs):
-    """span_processor creates and returns a batch span processor.
-    The processor uses an Exporter configured with passed kwargs.
-    """
-
-    exporter = Exporter(**kwargs)
-    return BatchExportSpanProcessor(
-        exporter, max_queue_size=10000, max_export_batch_size=10000
-    )
 
 
 def _expo_span(span: sdk.Span):
