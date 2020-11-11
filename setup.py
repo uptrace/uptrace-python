@@ -3,8 +3,8 @@ import os
 import setuptools
 
 
-PACKAGE_INFO = {}
+PKG_INFO = {}
 with open(os.path.join("src", "uptrace", "version.py")) as f:
-    exec(f.read(), PACKAGE_INFO)
+    exec(f.read(), PKG_INFO)
 
-setuptools.setup(version=PACKAGE_INFO["__version__"])
+setuptools.setup(version=PKG_INFO["__version__"])

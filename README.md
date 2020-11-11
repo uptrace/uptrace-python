@@ -1,7 +1,7 @@
 # Uptrace for Python
 
 [![Build Status](https://travis-ci.org/uptrace/uptrace-python.svg?branch=master)](https://travis-ci.org/uptrace/uptrace-python)
-[![Documentation](https://img.shields.io/badge/docs-uptrace-brightgreen)](https://docs.uptrace.dev/python/)
+[![Documentation](https://img.shields.io/badge/uptrace-documentation-informational)](https://docs.uptrace.dev/python/)
 
 <a href="https://docs.uptrace.dev/python/">
   <img src="https://docs.uptrace.dev/devicons/python-original.svg" height="200px" />
