@@ -2,3 +2,4 @@ wheel
 pytest
 pylint
 isort
+twine
