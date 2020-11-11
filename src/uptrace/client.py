@@ -2,11 +2,11 @@
 
 import typing
 
-from opentelemetry import trace
+from opentelemetry import trace as trace_api
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
-from .trace import Exporter
+from .spanexp import Exporter
 
 
 DUMMY_SPAN_NAME = "__dummy__"
@@ -23,15 +23,19 @@ class Client:
         if "filter" in cfg:
             cfg["filters"].append(cfg["filter"])
 
-        exporter = Exporter(**cfg)
+        self._exporter = Exporter(**cfg)
         self._bsp = BatchExportSpanProcessor(
-            exporter, max_queue_size=10000, max_export_batch_size=10000
+            self._exporter, max_queue_size=10000, max_export_batch_size=10000
         )
+
+        if self._cfg.get('disabled', False):
+            self._tracer = trace_api.DefaultTracer()
+            return
 
         provider = TracerProvider()
         provider.add_span_processor(self._bsp)
 
-        trace.set_tracer_provider(provider)
+        trace_api.set_tracer_provider(provider)
 
         self._tracer = self.get_tracer("github.com/uptrace/uptrace-python")
 
@@ -45,17 +49,17 @@ class Client:
 
     def get_tracer(self, *args, **kwargs) -> "Tracer":  # pylint:disable=no-self-use
         """Shortcut for trace.get_tracer"""
-        return trace.get_tracer(*args, **kwargs)
+        return trace_api.get_tracer(*args, **kwargs)
 
     def get_current_span(self) -> "trace.Span":  # pylint:disable=no-self-use
         """Shortcut for trace.get_current_span"""
-        return trace.get_current_span()
+        return trace_api.get_current_span()
 
     def report_exception(self, exc: Exception) -> None:
         """Reports an exception as a span event creating a dummy span if necessary."""
 
         span = self.get_current_span()
-        if span.is_recording_events():
+        if span.is_recording():
             span.record_exception(exc)
             return
 
