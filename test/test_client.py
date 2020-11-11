@@ -27,14 +27,14 @@ def test_span_processor_invalid_dsn():
 
 def test_send():
     client = uptrace.Client(dsn="https://<token>@api.uptrace.dev/<project_id>")
-    client._exporter._send = MagicMock(return_value=3)
+    client._exporter._send = MagicMock()
 
     client.report_exception(ValueError("hello"))
     client.close()
 
     client._exporter._send.assert_called()
-    traces = client._exporter._send.call_args.args[0]
-    assert len(traces) == 1
+    traces = client._exporter._send.call_args[0][0]
+    assert len(traces) == 1, traces
 
     trace = traces[0]
     spans = trace['spans']
