@@ -1,6 +1,9 @@
 .PHONY: all test
 
-lint:
+isort:
+	isort .
+
+lint: isort
 	pylint src/uptrace/
 
 test: lint

@@ -1,19 +1,18 @@
 """Uptrace span exporter for OpenTelemetry"""
 
+import logging
 import os
 import typing
-import logging
-from urllib.parse import urlparse
 from types import MappingProxyType
+from urllib.parse import urlparse
 
-import msgpack
 import lz4.frame
+import msgpack
 import requests
 from opentelemetry import trace as trace_api
 from opentelemetry.sdk import trace as trace_sdk
 from opentelemetry.sdk.trace import export as sdk
 from opentelemetry.sdk.util import BoundedDict
-
 
 logger = logging.getLogger(__name__)
 

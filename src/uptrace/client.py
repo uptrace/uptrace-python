@@ -8,7 +8,6 @@ from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
 from .spanexp import Exporter
 
-
 DUMMY_SPAN_NAME = "__dummy__"
 
 

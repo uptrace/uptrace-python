@@ -1,9 +1,10 @@
 from unittest.mock import MagicMock
+
+import pytest
 from opentelemetry import trace as trace_api
 from opentelemetry.trace import SpanKind
 from opentelemetry.trace.status import StatusCode
 
-import pytest
 import uptrace
 
 
