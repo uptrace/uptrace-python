@@ -4,6 +4,7 @@ import os
 import typing
 import logging
 from urllib.parse import urlparse
+from types import MappingProxyType
 
 import msgpack
 import lz4.frame
@@ -79,7 +80,7 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
 
         resp = requests.post(self._endpoint, data=payload, headers=self._headers)
         if resp.status_code < 200 or resp.status_code >= 300:
-            logger.error("%d: %s", resp.status_code, resp.text)
+            logger.error("uptrace: status=%d %s", resp.status_code, resp.text)
 
 
 def _expo_span(span: sdk.Span):
@@ -139,6 +140,8 @@ def _expo_links(links: typing.Sequence[trace_api.Link]):
 def _attrs(attrs):
     if isinstance(attrs, BoundedDict):
         return attrs._dict  # pylint: disable=protected-access
+    if isinstance(attrs, MappingProxyType):
+        return attrs.copy()
     return attrs
 
 
