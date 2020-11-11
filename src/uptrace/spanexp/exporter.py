@@ -21,20 +21,21 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
     """Uptrace span exporter for OpenTelemetry."""
 
     def __init__(self, dsn="", disabled=False, **_kwargs):
-        self._done = False
+        self._closed = False
 
         if disabled:
-            self._done = True
+            self._closed = True
             return
 
         if not dsn:
             dsn = os.getenv("UPTRACE_DSN")
             if not dsn:
-                raise ValueError("dsn is required")
+                raise ValueError("UPTRACE_DSN is empty or missing"+
+                                 " (to disable Uptrace, pass disabled=False)")
 
         o = urlparse(dsn)  # pylint:disable=invalid-name
         if not o.scheme:
-            raise ValueError(f"can't parse dsn: {dsn}")
+            raise ValueError(f"uptrace: can't parse DSN: {dsn}")
 
         host = o.hostname
         if o.port:
@@ -48,7 +49,7 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
         }
 
     def export(self, spans: typing.Sequence[sdk.Span]) -> sdk.SpanExportResult:
-        if self._done:
+        if self._closed:
             return sdk.SpanExportResult.SUCCESS
 
         trace_dict = {}
@@ -68,9 +69,9 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
         return sdk.SpanExportResult.SUCCESS
 
     def shutdown(self) -> None:
-        if self._done:
+        if self._closed:
             return
-        self._done = True
+        self._closed = True
 
     def _send(self, traces):
         payload = msgpack.packb({"traces": traces})
@@ -85,7 +86,7 @@ def _expo_span(span: sdk.Span):
     expose = {
         "id": span.context.span_id,
         "name": span.name,
-        "kind": str(span.kind),
+        "kind": span.kind.value,
         "startTime": span.start_time,
         "endTime": span.end_time,
     }
@@ -94,7 +95,7 @@ def _expo_span(span: sdk.Span):
         expose["parentId"] = span.parent.span_id
 
     if span.status is not None:
-        expose["statusCode"] = span.status.canonical_code.value
+        expose["statusCode"] = span.status.status_code.value
         if span.status.description:
             expose["statusMessage"] = span.status.description
 
@@ -108,7 +109,7 @@ def _expo_span(span: sdk.Span):
         expose["links"] = _expo_links(span.links)
 
     if span.resource:
-        expose["resource"] = _attrs(span.resource.labels)
+        expose["resource"] = _attrs(span.resource.attributes)
 
     return expose
 
