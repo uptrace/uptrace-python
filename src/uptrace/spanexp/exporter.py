@@ -41,6 +41,7 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
         if o.port:
             host += f":{o.port}"
 
+        self._dsn = o
         self._endpoint = f"{o.scheme}://{host}/api/v1/tracing{o.path}/spans"
         self._headers = {
             "Authorization": "Bearer " + o.username,
@@ -145,4 +146,4 @@ def _attrs(attrs):
 
 
 def _trace_id_bytes(trace_id: int):
-    return trace_id.to_bytes(16, byteorder="little")
+    return trace_id.to_bytes(16, byteorder="big")

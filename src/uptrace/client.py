@@ -65,3 +65,10 @@ class Client:
         span = self._tracer.start_span(DUMMY_SPAN_NAME)
         span.record_exception(exc)
         span.end()
+
+    def trace_url(self, span: "trace.Span") -> str:
+        o = self._exporter._dsn
+        host = o.hostname[len("api."):]
+        project_id = o.path[1:]
+        trace_id = span.get_span_context().trace_id
+        return f"{o.scheme}://{host}/{project_id}/search?q={trace_id:x}"
