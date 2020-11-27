@@ -6,6 +6,7 @@ from opentelemetry import trace as trace_api
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
+from .config import Config
 from .spanexp import Exporter
 
 DUMMY_SPAN_NAME = "__dummy__"
@@ -14,20 +15,15 @@ DUMMY_SPAN_NAME = "__dummy__"
 class Client:
     """Uptrace client for Python"""
 
-    def __init__(self, **cfg):
-        self._cfg = cfg
+    def __init__(self, **kwargs):
+        self._cfg = Config(**kwargs)
 
-        if "filters" not in cfg:
-            cfg["filters"] = []
-        if "filter" in cfg:
-            cfg["filters"].append(cfg["filter"])
-
-        self._exporter = Exporter(**cfg)
+        self._exporter = Exporter(self._cfg)
         self._bsp = BatchExportSpanProcessor(
             self._exporter, max_queue_size=10000, max_export_batch_size=10000
         )
 
-        if self._cfg.get('disabled', False):
+        if self._cfg.disabled:
             self._tracer = trace_api.DefaultTracer()
             return
 
@@ -44,7 +40,7 @@ class Client:
 
     def add_span_filter(self, filter_fn: typing.Callable):
         """Adds a filter function that filters span data"""
-        self._cfg["filters"].append(filter_fn)
+        self._cfg.filters.append(filter_fn)
 
     def get_tracer(self, *args, **kwargs) -> "Tracer":  # pylint:disable=no-self-use
         """Shortcut for trace.get_tracer"""
@@ -67,8 +63,9 @@ class Client:
         span.end()
 
     def trace_url(self, span: "trace.Span") -> str:
-        o = self._exporter._dsn
-        host = o.hostname[len("api."):]
-        project_id = o.path[1:]
+        """Returns the trace URL for the span."""
+        dsn = self._cfg.dsn
+        host = dsn.hostname[len("api."):]
+        project_id = dsn.path[1:]
         trace_id = span.get_span_context().trace_id
-        return f"{o.scheme}://{host}/{project_id}/search?q={trace_id:x}"
+        return f"{dsn.scheme}://{host}/{project_id}/search?q={trace_id:x}"

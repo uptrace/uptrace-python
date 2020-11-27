@@ -1,10 +1,8 @@
 """Uptrace span exporter for OpenTelemetry"""
 
 import logging
-import os
 import typing
 from types import MappingProxyType
-from urllib.parse import urlparse
 
 import lz4.frame
 import msgpack
@@ -20,34 +18,13 @@ logger = logging.getLogger(__name__)
 class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
     """Uptrace span exporter for OpenTelemetry."""
 
-    def __init__(self, dsn="", disabled=False, **_kwargs):
+    def __init__(self, cfg: "Config"):
+        self._cfg = cfg
         self._closed = False
 
-        if disabled:
+        if self._cfg.disabled:
             self._closed = True
             return
-
-        if not dsn:
-            dsn = os.getenv("UPTRACE_DSN")
-            if not dsn:
-                raise ValueError("UPTRACE_DSN is empty or missing"+
-                                 " (to disable Uptrace, pass disabled=False)")
-
-        o = urlparse(dsn)  # pylint:disable=invalid-name
-        if not o.scheme:
-            raise ValueError(f"uptrace: can't parse DSN: {dsn}")
-
-        host = o.hostname
-        if o.port:
-            host += f":{o.port}"
-
-        self._dsn = o
-        self._endpoint = f"{o.scheme}://{host}/api/v1/tracing{o.path}/spans"
-        self._headers = {
-            "Authorization": "Bearer " + o.username,
-            "Content-Type": "application/msgpack",
-            "Content-Encoding": "lz4",
-        }
 
     def export(self, spans: typing.Sequence[sdk.Span]) -> sdk.SpanExportResult:
         if self._closed:
@@ -78,7 +55,7 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
         payload = msgpack.packb({"traces": traces})
         payload = lz4.frame.compress(payload)
 
-        resp = requests.post(self._endpoint, data=payload, headers=self._headers)
+        resp = requests.post(self._cfg.endpoint, data=payload, headers=self._cfg.headers)
         if resp.status_code < 200 or resp.status_code >= 300:
             logger.error("uptrace: status=%d %s", resp.status_code, resp.text)
 
