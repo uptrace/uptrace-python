@@ -3,6 +3,10 @@
 isort:
 	isort .
 
+deps:
+	pip install -r dev-requirements.txt
+	python setup.py install
+
 lint: isort
 	pylint src/uptrace/
 
