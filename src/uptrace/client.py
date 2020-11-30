@@ -65,7 +65,7 @@ class Client:
     def trace_url(self, span: "trace.Span") -> str:
         """Returns the trace URL for the span."""
         dsn = self._cfg.dsn
-        host = dsn.hostname[len("api."):]
+        host = dsn.hostname[len("api.") :]
         project_id = dsn.path[1:]
         trace_id = span.get_span_context().trace_id
         return f"{dsn.scheme}://{host}/{project_id}/search?q={trace_id:x}"

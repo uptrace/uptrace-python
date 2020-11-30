@@ -55,7 +55,9 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
         payload = msgpack.packb({"traces": traces})
         payload = lz4.frame.compress(payload)
 
-        resp = requests.post(self._cfg.endpoint, data=payload, headers=self._cfg.headers)
+        resp = requests.post(
+            self._cfg.endpoint, data=payload, headers=self._cfg.headers
+        )
         if resp.status_code < 200 or resp.status_code >= 300:
             logger.error("uptrace: status=%d %s", resp.status_code, resp.text)
 

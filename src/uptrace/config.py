@@ -1,8 +1,10 @@
 """Uptrace client config"""
 
+import logging
 import os
 from urllib.parse import urlparse
 
+logger = logging.getLogger(__name__)
 
 # pylint:disable=too-few-public-methods
 class Config:
@@ -10,6 +12,8 @@ class Config:
 
     def __init__(self, dsn="", disabled=False, filters=None, **_kwargs):
         self.disabled = disabled
+        if os.getenv("UPTRACE_DISABLED") == "True":
+            self.disabled = True
 
         if filters is None:
             filters = []
@@ -21,8 +25,13 @@ class Config:
         if not dsn:
             dsn = os.getenv("UPTRACE_DSN")
             if not dsn:
-                raise ValueError("UPTRACE_DSN is empty or missing"+
-                                 " (to disable Uptrace, pass disabled=True)")
+                # pylint:disable=logging-not-lazy
+                logger.warning(
+                    "uptrace: UPTRACE_DSN is empty or missing"
+                    + " (to hide this message, use UPTRACE_DISABLED=True)"
+                )
+                self.disabled = True
+                return
 
         o = urlparse(dsn)  # pylint:disable=invalid-name
         if not o.scheme:
