@@ -11,6 +11,7 @@ from opentelemetry import trace as trace_api
 from opentelemetry.sdk import trace as trace_sdk
 from opentelemetry.sdk.trace import export as sdk
 from opentelemetry.sdk.util import BoundedDict
+from opentelemetry.trace.status import StatusCode
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +76,7 @@ def _expo_span(span: sdk.Span):
         expose["parentId"] = span.parent.span_id
 
     if span.status is not None:
-        expose["statusCode"] = span.status.status_code.value
+        expose["statusCode"] = _expo_status(span.status.status_code)
         if span.status.description:
             expose["statusMessage"] = span.status.description
 
@@ -114,6 +115,14 @@ def _expo_links(links: typing.Sequence[trace_api.Link]):
             }
         )
     return expose
+
+
+def _expo_status(status: StatusCode) -> str:
+    if status == StatusCode.ERROR:
+        return "error"
+    if status == StatusCode.OK:
+        return "ok"
+    return "unset"
 
 
 def _attrs(attrs):

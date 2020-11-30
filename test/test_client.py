@@ -59,7 +59,7 @@ def test_send():
     span = spans[0]
 
     assert span["kind"] == SpanKind.INTERNAL.value
-    assert span["statusCode"] == StatusCode.UNSET.value
+    assert span["statusCode"] == "unset"
 
     assert type(span["startTime"]) is int
     assert type(span["endTime"]) is int
