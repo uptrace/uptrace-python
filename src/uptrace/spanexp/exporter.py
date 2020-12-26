@@ -31,19 +31,13 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
         if self._closed:
             return sdk.SpanExportResult.SUCCESS
 
-        trace_dict = {}
+        spans_out = []
 
         for span in spans:
-            expose = _expo_span(span)
+            out = _out_span(span)
+            spans_out.append(out)
 
-            trace = trace_dict.get(span.context.trace_id)
-            if trace is None:
-                trace = {"id": _trace_id_bytes(span.context.trace_id), "spans": []}
-                trace_dict[span.context.trace_id] = trace
-
-            trace["spans"].append(expose)
-
-        self._send(list(trace_dict.values()))
+        self._send(spans_out)
 
         return sdk.SpanExportResult.SUCCESS
 
@@ -52,8 +46,8 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
             return
         self._closed = True
 
-    def _send(self, traces):
-        payload = msgpack.packb({"traces": traces})
+    def _send(self, spans):
+        payload = msgpack.packb({"spans": spans})
         payload = lz4.frame.compress(payload)
 
         resp = requests.post(
@@ -63,9 +57,10 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
             logger.error("uptrace: status=%d %s", resp.status_code, resp.text)
 
 
-def _expo_span(span: sdk.Span):
-    expose = {
+def _out_span(span: sdk.Span):
+    out = {
         "id": span.context.span_id,
+        "traceId": _trace_id_bytes(span.context.trace_id),
         "name": span.name,
         "kind": span.kind.value,
         "startTime": span.start_time,
@@ -73,51 +68,51 @@ def _expo_span(span: sdk.Span):
     }
 
     if span.parent is not None:
-        expose["parentId"] = span.parent.span_id
+        out["parentId"] = span.parent.span_id
 
     if span.status is not None:
-        expose["statusCode"] = _expo_status(span.status.status_code)
+        out["statusCode"] = _status(span.status.status_code)
         if span.status.description:
-            expose["statusMessage"] = span.status.description
+            out["statusMessage"] = span.status.description
 
     if span.attributes:
-        expose["attrs"] = _attrs(span.attributes)
+        out["attrs"] = _attrs(span.attributes)
 
     if span.events:
-        expose["events"] = _expo_events(span.events)
+        out["events"] = _events(span.events)
 
     if span.links:
-        expose["links"] = _expo_links(span.links)
+        out["links"] = _links(span.links)
 
     if span.resource:
-        expose["resource"] = _attrs(span.resource.attributes)
+        out["resource"] = _attrs(span.resource.attributes)
 
-    return expose
+    return out
 
 
-def _expo_events(events: typing.Sequence[trace_sdk.Event]):
-    expose = []
+def _events(events: typing.Sequence[trace_sdk.Event]):
+    out = []
     for evt in events:
-        expose.append(
+        out.append(
             {"name": evt.name, "attrs": _attrs(evt.attributes), "time": evt.timestamp}
         )
-    return expose
+    return out
 
 
-def _expo_links(links: typing.Sequence[trace_api.Link]):
-    expose = []
+def _links(links: typing.Sequence[trace_api.Link]):
+    out = []
     for link in links:
-        expose.append(
+        out.append(
             {
                 "traceId": _trace_id_bytes(link.context.trace_id),
                 "spanId": link.context.span_id,
                 "attrs": _attrs(link.attributes),
             }
         )
-    return expose
+    return out
 
 
-def _expo_status(status: StatusCode) -> str:
+def _status(status: StatusCode) -> str:
     if status == StatusCode.ERROR:
         return "error"
     if status == StatusCode.OK:

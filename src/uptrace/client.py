@@ -20,7 +20,10 @@ class Client:
 
         self._exporter = Exporter(self._cfg)
         self._bsp = BatchExportSpanProcessor(
-            self._exporter, max_queue_size=10000, max_export_batch_size=10000
+            self._exporter,
+            max_queue_size=2000,
+            max_export_batch_size=2000,
+            schedule_delay_millis=5000,
         )
 
         if self._cfg.disabled:

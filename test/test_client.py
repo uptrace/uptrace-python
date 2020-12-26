@@ -50,12 +50,8 @@ def test_send():
     client.close()
 
     client._exporter._send.assert_called()
-    traces = client._exporter._send.call_args[0][0]
-    assert len(traces) == 1, traces
-
-    trace = traces[0]
-    spans = trace["spans"]
-    assert len(spans) == 1
+    spans = client._exporter._send.call_args[0][0]
+    assert len(spans) == 1, traces
     span = spans[0]
 
     assert span["kind"] == SpanKind.INTERNAL.value
