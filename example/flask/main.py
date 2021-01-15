@@ -1,33 +1,28 @@
 #!/usr/bin/env python3
 
-import uptrace
 from flask import Flask
+from markupsafe import escape
+import uptrace
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 upclient = uptrace.Client(dsn="")
-upclient.report_exception(ValueError("Hello from flask"))
-tracer = upclient.get_tracer(__name__)
 
 app = Flask(__name__)
 FlaskInstrumentor().instrument_app(app)
 
 
-@app.route("/")
-def hello():
-    tracer = upclient.get_tracer(__name__)
+@app.route("/ping")
+def ping():
+    return "pong"
 
-    with tracer.start_as_current_span("main span") as span:
-        with tracer.start_as_current_span("child1") as span:
-            span.set_attribute("key1", "value1")
-            span.add_event("event-name", {"foo": "bar"})
 
-        with tracer.start_as_current_span("child2") as span:
-            span.set_attribute("key2", "value2")
-            span.add_event("event-name", {"foo": "baz"})
+@app.route("/hello/<username>")
+def hello(username):
+    span = upclient.get_current_span()
 
-    print("trace", upclient.trace_url(span))
-
-    return "Hello!"
+    trace_url = upclient.trace_url(span)
+    template = '<html><h1>Hello %s.</h1><p><a href="%s">%s</a></p></html>'
+    return template % (escape(username), trace_url, trace_url)
 
 
 if __name__ == "__main__":
