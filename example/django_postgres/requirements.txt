@@ -1,4 +1,4 @@
 django==3.1.5
-uptrace==0.2.1b0
+uptrace==0.2.2b0
 opentelemetry-instrumentation-django==0.16b1
 opentelemetry-instrumentation-psycopg2==0.16b1
