@@ -1,3 +1,6 @@
 flask==1.1.2
 uptrace==0.2.2b0
 opentelemetry-instrumentation-flask==0.16b1
+opentelemetry-instrumentation-sqlalchemy==0.16b1
+sqlalchemy==1.3.22
+Flask_Migrate==2.5.3

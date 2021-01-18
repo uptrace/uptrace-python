@@ -13,4 +13,4 @@ deps:
 	pip install -r requirements.txt
 
 run:
-	PYTHONPATH=../../src python main.py
+	PYTHONPATH=../../src python app.py
