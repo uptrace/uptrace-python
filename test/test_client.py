@@ -63,7 +63,7 @@ def test_send():
     assert span["resource"] == {
         "telemetry.sdk.language": "python",
         "telemetry.sdk.name": "opentelemetry",
-        "telemetry.sdk.version": "0.16b1",
+        "telemetry.sdk.version": "0.17b0",
     }
 
     events = span["events"]

@@ -2,8 +2,9 @@
 
 from flask import Flask
 from markupsafe import escape
-import uptrace
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
+
+import uptrace
 
 upclient = uptrace.Client(dsn="")
 
