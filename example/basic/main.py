@@ -3,7 +3,7 @@
 import uptrace
 
 # Set dsn or UPTRACE_DSN env var.
-upclient = uptrace.Client(dsn="")
+upclient = uptrace.Client(dsn="", service_name="myservice", service_version="1.0.0")
 
 # Use upclient to report errors when there are no spans.
 upclient.report_exception(ValueError("Hello from uptrace-python"))

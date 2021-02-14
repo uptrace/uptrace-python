@@ -17,7 +17,7 @@ def teardown_function():
 
 def test_span_processor_no_dsn(caplog):
     uptrace.Client()
-    assert " UPTRACE_DSN is empty or missing" in caplog.text
+    assert "either dsn option or UPTRACE_DSN is required" in caplog.text
 
 
 def test_span_processor_disabled():
@@ -26,10 +26,9 @@ def test_span_processor_disabled():
     client.close()
 
 
-def test_span_processor_invalid_dsn():
-    with pytest.raises(ValueError) as excinfo:
-        uptrace.Client(dsn="invalid")
-    assert "uptrace: can't parse DSN: invalid" in str(excinfo.value)
+def test_span_processor_invalid_dsn(caplog):
+    uptrace.Client(dsn="invalid")
+    assert "can't parse DSN: invalid" in caplog.text
 
 
 def test_trace_url():
@@ -65,7 +64,7 @@ def test_send():
         "service.name": "myservice",
         "telemetry.sdk.language": "python",
         "telemetry.sdk.name": "opentelemetry",
-        "telemetry.sdk.version": "1.0.0rc1",
+        "telemetry.sdk.version": "0.17b0",
     }
 
     events = span["events"]
