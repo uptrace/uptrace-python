@@ -61,9 +61,10 @@ def test_send():
     assert type(span["endTime"]) is int
 
     assert span["resource"] == {
+        "service.name": "unknown_service",
         "telemetry.sdk.language": "python",
         "telemetry.sdk.name": "opentelemetry",
-        "telemetry.sdk.version": "0.17b0",
+        "telemetry.sdk.version": "1.0.0rc1",
     }
 
     events = span["events"]

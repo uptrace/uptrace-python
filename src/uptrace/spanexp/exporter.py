@@ -13,13 +13,15 @@ from opentelemetry.sdk.trace import export as sdk
 from opentelemetry.sdk.util import BoundedDict
 from opentelemetry.trace.status import StatusCode
 
+from ..config import Config
+
 logger = logging.getLogger(__name__)
 
 
 class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
     """Uptrace span exporter for OpenTelemetry."""
 
-    def __init__(self, cfg: "Config"):
+    def __init__(self, cfg: Config):
         self._cfg = cfg
         self._closed = False
 

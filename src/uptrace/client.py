@@ -3,7 +3,7 @@
 import typing
 
 from opentelemetry import trace as trace_api
-from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace import Tracer, TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
 from .config import Config
@@ -21,8 +21,8 @@ class Client:
         self._exporter = Exporter(self._cfg)
         self._bsp = BatchExportSpanProcessor(
             self._exporter,
-            max_queue_size=2000,
-            max_export_batch_size=2000,
+            max_queue_size=1000,
+            max_export_batch_size=1000,
             schedule_delay_millis=5000,
         )
 
@@ -45,11 +45,11 @@ class Client:
         """Adds a filter function that filters span data"""
         self._cfg.filters.append(filter_fn)
 
-    def get_tracer(self, *args, **kwargs) -> "Tracer":  # pylint:disable=no-self-use
+    def get_tracer(self, *args, **kwargs) -> Tracer:  # pylint:disable=no-self-use
         """Shortcut for trace.get_tracer"""
         return trace_api.get_tracer(*args, **kwargs)
 
-    def get_current_span(self) -> "trace.Span":  # pylint:disable=no-self-use
+    def get_current_span(self) -> trace_api.Span:  # pylint:disable=no-self-use
         """Shortcut for trace.get_current_span"""
         return trace_api.get_current_span()
 
@@ -65,7 +65,7 @@ class Client:
         span.record_exception(exc)
         span.end()
 
-    def trace_url(self, span: "trace.Span") -> str:
+    def trace_url(self, span: trace_api.Span) -> str:
         """Returns the trace URL for the span."""
         dsn = self._cfg.dsn
         host = dsn.hostname[len("api.") :]
