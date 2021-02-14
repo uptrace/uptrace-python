@@ -42,7 +42,9 @@ def test_trace_url():
 
 
 def test_send():
-    client = uptrace.Client(dsn="https://<token>@api.uptrace.dev/<project_id>")
+    client = uptrace.Client(
+        dsn="https://<token>@api.uptrace.dev/<project_id>", service_name="myservice"
+    )
     client._exporter._send = MagicMock()
 
     client.report_exception(ValueError("hello"))
@@ -60,7 +62,7 @@ def test_send():
     assert type(span["endTime"]) is int
 
     assert span["resource"] == {
-        "service.name": "unknown_service",
+        "service.name": "myservice",
         "telemetry.sdk.language": "python",
         "telemetry.sdk.name": "opentelemetry",
         "telemetry.sdk.version": "1.0.0rc1",

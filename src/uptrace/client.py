@@ -30,7 +30,7 @@ class Client:
             self._tracer = trace_api.DefaultTracer()
             return
 
-        provider = TracerProvider()
+        provider = TracerProvider(resource=self._cfg.resource)
         provider.add_span_processor(self._bsp)
 
         trace_api.set_tracer_provider(provider)
