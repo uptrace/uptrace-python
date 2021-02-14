@@ -2,7 +2,6 @@ from unittest.mock import MagicMock
 
 import pytest
 from opentelemetry import trace as trace_api
-from opentelemetry.trace import SpanKind
 from opentelemetry.trace.status import StatusCode
 
 import uptrace
@@ -54,7 +53,7 @@ def test_send():
     assert len(spans) == 1, traces
     span = spans[0]
 
-    assert span["kind"] == SpanKind.INTERNAL.value
+    assert span["kind"] == "internal"
     assert span["statusCode"] == "unset"
 
     assert type(span["startTime"]) is int

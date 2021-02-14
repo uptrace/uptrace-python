@@ -7,10 +7,10 @@ from types import MappingProxyType
 import lz4.frame
 import msgpack
 import requests
-from opentelemetry import trace as trace_api
 from opentelemetry.sdk import trace as trace_sdk
 from opentelemetry.sdk.trace import export as sdk
 from opentelemetry.sdk.util import BoundedDict
+from opentelemetry.trace import Link, SpanKind
 from opentelemetry.trace.status import StatusCode
 
 from ..config import Config
@@ -64,7 +64,7 @@ def _out_span(span: sdk.Span):
         "id": span.context.span_id,
         "traceId": _trace_id_bytes(span.context.trace_id),
         "name": span.name,
-        "kind": span.kind.value,
+        "kind": _kind(span.kind),
         "startTime": span.start_time,
         "endTime": span.end_time,
     }
@@ -101,7 +101,7 @@ def _events(events: typing.Sequence[trace_sdk.Event]):
     return out
 
 
-def _links(links: typing.Sequence[trace_api.Link]):
+def _links(links: typing.Sequence[Link]):
     out = []
     for link in links:
         out.append(
@@ -112,6 +112,18 @@ def _links(links: typing.Sequence[trace_api.Link]):
             }
         )
     return out
+
+
+def _kind(kind: SpanKind) -> str:
+    if kind == SpanKind.SERVER:
+        return "server"
+    if kind == SpanKind.CLIENT:
+        return "client"
+    if kind == SpanKind.PRODUCER:
+        return "producer"
+    if kind == SpanKind.CONSUMER:
+        return "consumer"
+    return "internal"
 
 
 def _status(status: StatusCode) -> str:
