@@ -3,9 +3,10 @@
 import logging
 import os
 from collections import namedtuple
+from typing import Optional
 from urllib.parse import urlparse
 
-from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.resources import Attributes, Resource
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,8 @@ class Config:
         filters=None,
         service_name="",
         service_version="",
-        resource: Resource = None,
+        resource_attributes: Optional[Attributes] = None,
+        resource: Optional[Resource] = None,
         **_kwargs,
     ):
         self.disabled = disabled
@@ -35,7 +37,9 @@ class Config:
         if self.disabled:
             return
 
-        self.resource = build_resource(resource, service_name, service_version)
+        self.resource = build_resource(
+            resource, resource_attributes, service_name, service_version
+        )
 
         if not dsn:
             dsn = os.getenv("UPTRACE_DSN", "")
@@ -68,11 +72,14 @@ def parse_dsn(dsn: str) -> DSN:
     if dsn == "":
         raise ValueError("uptrace: either dsn option or UPTRACE_DSN is required")
 
-    o = urlparse(dsn)  # pylint:disable=invalid-name
+    o = urlparse(dsn)
     if not o.scheme:
         raise ValueError(f"uptrace: can't parse DSN: {dsn}")
 
     host = o.hostname
+    if not host:
+        raise ValueError(f"uptrace: DSN does not have host (DSN={dsn})")
+
     if o.port:
         host += f":{o.port}"
 
@@ -85,13 +92,18 @@ def parse_dsn(dsn: str) -> DSN:
 
 
 def build_resource(
-    resource: Resource, service_name: str, service_version: str
+    resource: Resource,
+    resource_attributes: Attributes,
+    service_name: str,
+    service_version: str,
 ) -> Resource:
     attrs = {}
 
-    if service_name != "":
+    if resource_attributes:
+        attrs.update(resource_attributes)
+    if service_name:
         attrs["service.name"] = service_name
-    if service_version != "":
+    if service_version:
         attrs["service.version"] = service_version
 
     if resource is None:
