@@ -1,8 +1,9 @@
 """Uptrace client for Python"""
 
 import typing
+from typing import Optional
 
-from opentelemetry import trace as trace_api
+from opentelemetry import trace
 from opentelemetry.sdk.trace import Tracer, TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
@@ -27,15 +28,15 @@ class Client:
         )
 
         if self._cfg.disabled:
-            self._tracer = trace_api.DefaultTracer()
+            self._tracer = trace.DefaultTracer()
             return
 
         provider = TracerProvider(resource=self._cfg.resource)
         provider.add_span_processor(self._bsp)
 
-        trace_api.set_tracer_provider(provider)
+        trace.set_tracer_provider(provider)
 
-        self._tracer = self.get_tracer("uptrace-python")
+        self._tracer = trace.get_tracer("uptrace-python")
 
     def close(self) -> None:
         """Closes the client releasing associated resources"""
@@ -45,18 +46,10 @@ class Client:
         """Adds a filter function that filters span data"""
         self._cfg.filters.append(filter_fn)
 
-    def get_tracer(self, *args, **kwargs) -> Tracer:  # pylint:disable=no-self-use
-        """Shortcut for trace.get_tracer"""
-        return trace_api.get_tracer(*args, **kwargs)
-
-    def get_current_span(self) -> trace_api.Span:  # pylint:disable=no-self-use
-        """Shortcut for trace.get_current_span"""
-        return trace_api.get_current_span()
-
     def report_exception(self, exc: Exception) -> None:
         """Reports an exception as a span event creating a dummy span if necessary."""
 
-        span = self.get_current_span()
+        span = trace.get_current_span()
         if span.is_recording():
             span.record_exception(exc)
             return
@@ -65,8 +58,12 @@ class Client:
         span.record_exception(exc)
         span.end()
 
-    def trace_url(self, span: trace_api.Span) -> str:
+    def trace_url(self, span: Optional[trace.Span] = None) -> str:
         """Returns the trace URL for the span."""
+
+        if span is None:
+            span = trace.get_current_span()
+
         dsn = self._cfg.dsn
         host = dsn.host[len("api.") :]
         trace_id = span.get_span_context().trace_id

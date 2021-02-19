@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from opentelemetry import trace
 import uptrace
 
 upclient = uptrace.Client(
@@ -12,7 +13,7 @@ upclient = uptrace.Client(
 # Use upclient to report errors when there are no spans.
 upclient.report_exception(ValueError("Hello from uptrace-python"))
 
-tracer = upclient.get_tracer(__name__)
+tracer = trace.get_tracer("app_or_package_name", "1.0.0")
 
 with tracer.start_as_current_span("main") as span:
     with tracer.start_as_current_span("child1") as span:

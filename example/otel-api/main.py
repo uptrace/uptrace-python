@@ -14,7 +14,7 @@ upclient = uptrace.Client(
 from opentelemetry import trace
 from opentelemetry.trace.status import StatusCode
 
-tracer = trace.get_tracer("app_or_package_name")
+tracer = trace.get_tracer("app_or_package_name", "1.0.0")
 
 # Start a span and set some attributes.
 
