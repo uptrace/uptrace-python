@@ -4,7 +4,7 @@ import typing
 from typing import Optional
 
 from opentelemetry import trace
-from opentelemetry.sdk.trace import Tracer, TracerProvider
+from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
 from .config import Config

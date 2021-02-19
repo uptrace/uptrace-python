@@ -1,18 +1,18 @@
 from unittest.mock import MagicMock
 
 import pytest
-from opentelemetry import trace as trace_api
+from opentelemetry import trace as trace
 from opentelemetry.trace.status import StatusCode
 
 import uptrace
 
 
 def setup_function():
-    trace_api._TRACER_PROVIDER = None
+    trace._TRACER_PROVIDER = None
 
 
 def teardown_function():
-    trace_api._TRACER_PROVIDER = None
+    trace._TRACER_PROVIDER = None
 
 
 def test_span_processor_no_dsn(caplog):
@@ -33,7 +33,7 @@ def test_span_processor_invalid_dsn(caplog):
 
 def test_trace_url():
     client = uptrace.Client(dsn="https://token@api.uptrace.dev/123")
-    tracer = client.get_tracer("tracer_name")
+    tracer = trace.get_tracer("tracer_name")
     span = tracer.start_span("main span")
 
     url = client.trace_url(span)

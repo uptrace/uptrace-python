@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from opentelemetry import trace
+
 import uptrace
 
 upclient = uptrace.Client(
