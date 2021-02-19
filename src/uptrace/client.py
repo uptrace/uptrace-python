@@ -35,7 +35,7 @@ class Client:
 
         trace_api.set_tracer_provider(provider)
 
-        self._tracer = self.get_tracer("github.com/uptrace/uptrace-python")
+        self._tracer = self.get_tracer("uptrace-python")
 
     def close(self) -> None:
         """Closes the client releasing associated resources"""

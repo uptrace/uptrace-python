@@ -2,18 +2,22 @@
 
 import uptrace
 
-# Set dsn or UPTRACE_DSN env var.
-upclient = uptrace.Client(dsn="", service_name="myservice", service_version="1.0.0")
+upclient = uptrace.Client(
+    # Set dsn or UPTRACE_DSN env var.
+    dsn="",
+    service_name="myservice",
+    service_version="1.0.0",
+)
 
 # Use upclient to report errors when there are no spans.
 upclient.report_exception(ValueError("Hello from uptrace-python"))
 
 tracer = upclient.get_tracer(__name__)
 
-with tracer.start_as_current_span("main span") as span:
+with tracer.start_as_current_span("main") as span:
     with tracer.start_as_current_span("child1") as span:
         span.set_attribute("key1", "value1")
-        span.record_exception(ValueError("exception1"))
+        span.record_exception(ValueError("error1"))
 
     with tracer.start_as_current_span("child2") as span:
         span.set_attribute("key2", "value2")
