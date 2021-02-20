@@ -72,10 +72,13 @@ def _out_span(span: sdk.Span):
     if span.parent is not None:
         out["parentId"] = span.parent.span_id
 
-    if span.status is not None:
-        out["statusCode"] = _status(span.status.status_code)
-        if span.status.description:
-            out["statusMessage"] = span.status.description
+    out["statusCode"] = _status(span.status.status_code)
+    if span.status.description:
+        out["statusMessage"] = span.status.description
+
+    out["tracerName"] = span.instrumentation_info.name
+    if span.instrumentation_info.version:
+        out["tracerVersion"] = span.instrumentation_info.version
 
     if span.attributes:
         out["attrs"] = _attrs(span.attributes)

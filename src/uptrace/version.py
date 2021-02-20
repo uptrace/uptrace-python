@@ -1,3 +1,3 @@
 """Uptrace exporter version"""
 
-__version__ = "0.2.4b0"
+__version__ = "0.2.5b0"

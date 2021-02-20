@@ -37,7 +37,7 @@ def test_trace_url():
     span = tracer.start_span("main span")
 
     url = client.trace_url(span)
-    assert url.startswith("https://uptrace.dev/123/search?q=")
+    assert url.startswith("https://uptrace.dev/search/123?q=")
 
 
 def test_send():
@@ -54,11 +54,13 @@ def test_send():
     assert len(spans) == 1, traces
     span = spans[0]
 
+    assert type(span["startTime"]) is int
+    assert type(span["endTime"]) is int
+
     assert span["kind"] == "internal"
     assert span["statusCode"] == "unset"
 
-    assert type(span["startTime"]) is int
-    assert type(span["endTime"]) is int
+    assert span["tracerName"] == "uptrace-python"
 
     assert span["resource"] == {
         "service.name": "myservice",
