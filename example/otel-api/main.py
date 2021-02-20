@@ -19,21 +19,22 @@ tracer = trace.get_tracer("app_or_package_name", "1.0.0")
 # Start a span and set some attributes.
 
 with tracer.start_as_current_span("main", kind=trace.SpanKind.SERVER) as span:
-    span.set_attribute("key1", "value1")
-    # span.set_attributes({"key2": 123.456, "key3": [1, 2, 3]})
-
-    span.add_event(
-        "log",
-        {"log.severity": "error", "log.message": "User not found", "enduser.id": "123"},
-    )
-
-    span.record_exception(ValueError("error1"))
-
-    span.set_status(trace.Status(StatusCode.ERROR, "error description"))
-
     if span.is_recording():
-        # Conditionally record some expensive data.
-        pass
+        span.set_attribute("key1", "value1")
+        # span.set_attributes({"key2": 123.456, "key3": [1, 2, 3]})
+
+        span.add_event(
+            "log",
+            {
+                "log.severity": "error",
+                "log.message": "User not found",
+                "enduser.id": "123",
+            },
+        )
+
+        span.record_exception(ValueError("error1"))
+
+        span.set_status(trace.Status(StatusCode.ERROR, "error description"))
 
 # Current span logic.
 

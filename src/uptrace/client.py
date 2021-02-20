@@ -67,4 +67,4 @@ class Client:
         dsn = self._cfg.dsn
         host = dsn.host[len("api.") :]
         trace_id = span.get_span_context().trace_id
-        return f"{dsn.scheme}://{host}/{dsn.project_id}/search?q={trace_id:x}"
+        return f"{dsn.scheme}://{host}/search/{dsn.project_id}?q={trace_id:x}"
