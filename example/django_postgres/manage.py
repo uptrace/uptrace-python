@@ -1,22 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
 
-from opentelemetry.instrumentation.django import DjangoInstrumentor
-from opentelemetry.instrumentation.psycopg2 import Psycopg2Instrumentor
-
-import uptrace
-
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_postgres.settings')
-
-    upclient = uptrace.Client(dsn="")
-
-    #Psycopg2Instrumentor().instrument()
-    DjangoInstrumentor().instrument()
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_postgres.settings")
+    import django_postgres
 
     try:
         from django.core.management import execute_from_command_line
@@ -29,5 +20,5 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

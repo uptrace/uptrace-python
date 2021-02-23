@@ -9,5 +9,7 @@
     {% endfor %}
     </ul>
 {% else %}
-    <p>No polls are available.</p>
+    <p>No polls are available. Use <a href="/admin/">admin</a> to create a poll.</p>
 {% endif %}
+
+<p><a href="{{ trace_url }}">{{ trace_url }}</a></p>

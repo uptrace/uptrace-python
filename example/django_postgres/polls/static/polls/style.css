@@ -1,6 +1,6 @@
 li a {
     color: green;
 }
-body {
+body.disabled {
     background: white url("images/background.gif") no-repeat;
 }
