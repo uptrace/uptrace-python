@@ -25,7 +25,11 @@ otlp_exporter = OTLPSpanExporter(
     headers=(("uptrace-token", os.environ.get("UPTRACE_TOKEN")),),
 )
 
-span_processor = BatchExportSpanProcessor(otlp_exporter)
+span_processor = BatchExportSpanProcessor(
+    otlp_exporter,
+    max_queue_size=1000,
+    max_export_batch_size=1000,
+)
 tracer_provider.add_span_processor(span_processor)
 
 trace.set_tracer_provider(tracer_provider)
