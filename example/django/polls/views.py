@@ -3,8 +3,8 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
-
 from django_postgres import upclient
+
 from .models import Choice, Question
 
 

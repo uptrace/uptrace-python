@@ -4,9 +4,9 @@ import logging
 import typing
 from types import MappingProxyType
 
-import lz4.frame
 import msgpack
 import requests
+import zstd
 from opentelemetry.sdk import trace as trace_sdk
 from opentelemetry.sdk.trace import export as sdk
 from opentelemetry.sdk.util import BoundedDict
@@ -29,6 +29,16 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
             self._closed = True
             return
 
+        dsno = cfg.dsn
+        self._endpoint = (
+            f"{dsno.scheme}://{dsno.host}/api/v1/tracing/{dsno.project_id}/spans"
+        )
+        self._headers = {
+            "Authorization": "Bearer " + dsno.token,
+            "Content-Type": "application/msgpack",
+            "Content-Encoding": "zstd",
+        }
+
     def export(self, spans: typing.Sequence[sdk.Span]) -> sdk.SpanExportResult:
         if self._closed:
             return sdk.SpanExportResult.SUCCESS
@@ -50,11 +60,9 @@ class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
 
     def _send(self, spans):
         payload = msgpack.packb({"spans": spans})
-        payload = lz4.frame.compress(payload)
+        payload = zstd.compress(payload)
 
-        resp = requests.post(
-            self._cfg.endpoint, data=payload, headers=self._cfg.headers
-        )
+        resp = requests.post(self._endpoint, data=payload, headers=self._headers)
         if resp.status_code < 200 or resp.status_code >= 300:
             logger.error("uptrace: status=%d %s", resp.status_code, resp.text)
 

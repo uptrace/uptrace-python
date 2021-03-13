@@ -11,7 +11,6 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 
-
 resource = Resource(
     attributes={"service.name": "myservice", "service.version": "1.0.0"}
 )
@@ -22,6 +21,7 @@ credentials = grpc.ssl_channel_credentials()
 otlp_exporter = OTLPSpanExporter(
     endpoint="otlp.uptrace.dev:4317",
     credentials=credentials,
+    # Set the Uptrace token here or use UPTRACE_TOKEN env var.
     headers=(("uptrace-token", os.environ.get("UPTRACE_TOKEN")),),
 )
 

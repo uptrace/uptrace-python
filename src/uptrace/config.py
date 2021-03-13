@@ -54,16 +54,6 @@ class Config:
             self.disabled = True
             self.dsn = parse_dsn("https://<token>@api.uptrace.dev/<project_id>")
 
-        dsno = self.dsn
-        self.endpoint = (
-            f"{dsno.scheme}://{dsno.host}/api/v1/tracing/{dsno.project_id}/spans"
-        )
-        self.headers = {
-            "Authorization": "Bearer " + self.dsn.token,
-            "Content-Type": "application/msgpack",
-            "Content-Encoding": "lz4",
-        }
-
 
 DSN = namedtuple("DSN", ["scheme", "host", "project_id", "token"])
 
