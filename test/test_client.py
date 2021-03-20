@@ -59,9 +59,10 @@ def test_send(send):
     assert span["tracerName"] == "uptrace-python"
 
     assert span["resource"] == {
+        "service.name": "unknown_service",
         "telemetry.sdk.language": "python",
         "telemetry.sdk.name": "opentelemetry",
-        "telemetry.sdk.version": "0.17b0",
+        "telemetry.sdk.version": "1.0.0rc1",
     }
 
     events = span["events"]

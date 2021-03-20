@@ -1,17 +1,13 @@
 .PHONY: all test
 
-isort:
-	isort .
-
 deps:
-	pip install -r dev-requirements.txt
-	python setup.py install
+	pip install nox
 
-lint: isort
-	pylint src/uptrace/
+lint:
+	nox -s lint
 
-test: lint
-	PYTHONPATH=src pytest
+test:
+	nox -s test-3.8
 
 release: test
 	rm -r build dist
