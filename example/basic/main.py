@@ -1,18 +1,15 @@
 #!/usr/bin/env python3
 
-from opentelemetry import trace
-
 import uptrace
 
-upclient = uptrace.Client(
+uptrace.configure_opentelemetry(
     # Set dsn or UPTRACE_DSN env var.
     dsn="",
     service_name="myservice",
     service_version="1.0.0",
 )
 
-# Use upclient to report errors when there are no spans.
-upclient.report_exception(ValueError("Hello from uptrace-python"))
+from opentelemetry import trace
 
 tracer = trace.get_tracer("app_or_package_name", "1.0.0")
 
@@ -25,7 +22,7 @@ with tracer.start_as_current_span("main") as span:
         span.set_attribute("key2", "value2")
         span.set_attribute("key3", 123.456)
 
-    print("trace:", upclient.trace_url(span))
+    print("trace:", uptrace.trace_url(span))
 
-# Flush and close the client.
-upclient.close()
+# Send buffered spans.
+trace.get_tracer_provider().shutdown()

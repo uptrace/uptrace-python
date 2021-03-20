@@ -1,13 +1,23 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
 
+from opentelemetry.instrumentation.django import DjangoInstrumentor
+
+import uptrace
+
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_postgres.settings")
-    import django_postgres
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djangoex.settings")
+
+    uptrace.configure_opentelemetry(
+        # Copy DSN here or use UPTRACE_DSN env var.
+        dsn="",
+    )
+
+    DjangoInstrumentor().instrument()
 
     try:
         from django.core.management import execute_from_command_line

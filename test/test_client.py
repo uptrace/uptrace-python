@@ -1,14 +1,16 @@
-from unittest.mock import MagicMock
+from unittest.mock import patch
 
 import pytest
 from opentelemetry import trace as trace
+from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.trace.status import StatusCode
 
 import uptrace
+from uptrace.spanexp import Exporter
 
 
 def setup_function():
-    trace._TRACER_PROVIDER = None
+    trace._TRACER_PROVIDER = TracerProvider()
 
 
 def teardown_function():
@@ -16,41 +18,35 @@ def teardown_function():
 
 
 def test_span_processor_no_dsn(caplog):
-    uptrace.Client()
+    uptrace.configure_opentelemetry()
     assert "either dsn option or UPTRACE_DSN is required" in caplog.text
 
 
-def test_span_processor_disabled():
-    client = uptrace.Client(disabled=True)
-    client.report_exception(ValueError("hello"))
-    client.close()
-
-
 def test_span_processor_invalid_dsn(caplog):
-    uptrace.Client(dsn="invalid")
+    uptrace.configure_opentelemetry(dsn="invalid")
     assert "can't parse DSN: invalid" in caplog.text
 
 
 def test_trace_url():
-    client = uptrace.Client(dsn="https://token@api.uptrace.dev/123")
+    uptrace.configure_opentelemetry(dsn="https://token@api.uptrace.dev/123")
     tracer = trace.get_tracer("tracer_name")
     span = tracer.start_span("main span")
 
-    url = client.trace_url(span)
+    url = uptrace.trace_url(span)
     assert url.startswith("https://uptrace.dev/search/123?q=")
 
 
-def test_send():
-    client = uptrace.Client(
-        dsn="https://<token>@api.uptrace.dev/<project_id>", service_name="myservice"
+@patch.object(Exporter, "_send")
+def test_send(send):
+    uptrace.configure_opentelemetry(
+        dsn="https://<token>@api.uptrace.dev/<project_id>",
     )
-    client._exporter._send = MagicMock()
 
-    client.report_exception(ValueError("hello"))
-    client.close()
+    uptrace.report_exception(ValueError("hello"))
+    trace.get_tracer_provider().shutdown()
 
-    client._exporter._send.assert_called()
-    spans = client._exporter._send.call_args[0][0]
+    send.assert_called()
+    spans = send.call_args[0][0]
     assert len(spans) == 1, traces
     span = spans[0]
 
@@ -63,7 +59,6 @@ def test_send():
     assert span["tracerName"] == "uptrace-python"
 
     assert span["resource"] == {
-        "service.name": "myservice",
         "telemetry.sdk.language": "python",
         "telemetry.sdk.name": "opentelemetry",
         "telemetry.sdk.version": "0.17b0",

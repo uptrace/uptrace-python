@@ -13,7 +13,7 @@ from opentelemetry.sdk.util import BoundedDict
 from opentelemetry.trace import Link, SpanKind
 from opentelemetry.trace.status import StatusCode
 
-from ..config import Config
+from ..dsn import DSN
 
 logger = logging.getLogger(__name__)
 
@@ -21,20 +21,15 @@ logger = logging.getLogger(__name__)
 class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
     """Uptrace span exporter for OpenTelemetry."""
 
-    def __init__(self, cfg: Config):
-        self._cfg = cfg
+    def __init__(self, dsn: DSN):
+        self._dsn = dsn
         self._closed = False
 
-        if self._cfg.disabled:
-            self._closed = True
-            return
-
-        dsno = cfg.dsn
         self._endpoint = (
-            f"{dsno.scheme}://{dsno.host}/api/v1/tracing/{dsno.project_id}/spans"
+            f"{dsn.scheme}://{dsn.host}/api/v1/tracing/{dsn.project_id}/spans"
         )
         self._headers = {
-            "Authorization": "Bearer " + dsno.token,
+            "Authorization": "Bearer " + dsn.token,
             "Content-Type": "application/msgpack",
             "Content-Encoding": "zstd",
         }

@@ -4,5 +4,5 @@ To run this example:
 
 ```bash
 pip install -r requirements.txt
-UPTRACE_DSN="https://<key>@uptrace.dev/<project_id>" ./main.py
+UPTRACE_DSN="https://<token>@api.uptrace.dev/<project_id>" ./main.py
 ```

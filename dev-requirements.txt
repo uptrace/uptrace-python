@@ -1,6 +1,6 @@
 wheel
 mypy
-pytest
-pylint
+pytest==6.2.2
+pylint==2.7.2
 isort
 twine

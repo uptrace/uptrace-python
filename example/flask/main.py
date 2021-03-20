@@ -2,32 +2,51 @@
 
 from flask import Flask
 from markupsafe import escape
+from opentelemetry import trace
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 import uptrace
 
-upclient = uptrace.Client(dsn="")
+uptrace.configure_opentelemetry(
+    # Set dsn or UPTRACE_DSN env var.
+    dsn="",
+)
 
 app = Flask(__name__)
 FlaskInstrumentor().instrument_app(app)
 
 
-@app.route("/ping")
-def ping():
-    return "pong"
+@app.route("/")
+def index():
+    trace_url = uptrace.trace_url()
+
+    return f"""
+<html>
+  <p>Here are some routes for you:</p>
+
+  <ul>
+    <li><a href="/hello/world">Hello world</a></li>
+    <li><a href="/hello/foo-bar">Hello foo-bar</a></li>
+  </ul>
+
+  <p><a href="{trace_url}">{trace_url}</a></p>
+</html>
+"""
 
 
 @app.route("/hello/<username>")
 def hello(username):
-    span = upclient.get_current_span()
-
-    trace_url = upclient.trace_url(span)
-    template = '<html><h1>Hello %s.</h1><p><a href="%s">%s</a></p></html>'
-    return template % (escape(username), trace_url, trace_url)
+    trace_url = uptrace.trace_url()
+    return f"""
+<html>
+  <h3>Hello {username}</h3>
+  <p><a href="{trace_url}">{trace_url}</a></p>
+</html>
+"""
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    app.run(debug=True, host="0.0.0.0", port=8000)
 
-    # Flush and close the client.
-    upclient.close()
+    # Send buffered spans.
+    trace.get_tracer_provider().shutdown()

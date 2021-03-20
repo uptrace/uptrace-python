@@ -1,16 +1,5 @@
-all: build up
-
-build:
-	docker-compose build
-up:
-	docker-compose up --detach flask
-down:
-	docker-compose down
-logs:
-	docker-compose logs flask
+all:
+	PYTHONPATH=../../src OTEL_PYTHON_TRACER_PROVIDER=sdk_tracer_provider ./main.py
 
 deps:
 	pip install -r requirements.txt
-
-run:
-	PYTHONPATH=../../src python main.py
