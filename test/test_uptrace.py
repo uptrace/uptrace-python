@@ -40,6 +40,7 @@ def test_trace_url():
 def test_send(send):
     uptrace.configure_opentelemetry(
         dsn="https://<token>@api.uptrace.dev/<project_id>",
+        service_name="myservice",
     )
 
     uptrace.report_exception(ValueError("hello"))
