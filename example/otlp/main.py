@@ -46,7 +46,7 @@ with tracer.start_as_current_span("main") as span:
         span.set_attribute("key3", 123.456)
 
     trace_id = span.get_span_context().trace_id
-    print(f"trace id: {trace_id:x}")
+    print(f"trace id: {trace_id:0{32}x}")
 
-# Flush the buffers.
-span_processor.shutdown()
+# Send buffered spans.
+trace.get_tracer_provider().shutdown()

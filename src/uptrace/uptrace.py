@@ -23,6 +23,8 @@ def configure_opentelemetry(
     if os.getenv("UPTRACE_DISABLED") == "True":
         return
 
+    os.environ.setdefault("OTEL_PYTHON_TRACER_PROVIDER", "sdk_tracer_provider")
+
     if _CLIENT is not None:
         logger.warning("Uptrace is already configured")
 
