@@ -38,7 +38,7 @@ class Client:
         dsn = self._dsn
         host = remove_prefix(dsn.host, "api.")
         trace_id = span.get_span_context().trace_id
-        return f"{dsn.scheme}://{host}/search/{dsn.project_id}?q={trace_id:x}"
+        return f"{dsn.scheme}://{host}/search/{dsn.project_id}?q={trace_id:0{32}x}"
 
     def _get_tracer(self):
         if self._tracer is None:

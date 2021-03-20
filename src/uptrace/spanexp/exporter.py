@@ -100,9 +100,13 @@ def _out_span(span: sdk.Span):
 
 def _events(events: typing.Sequence[trace_sdk.Event]):
     out = []
-    for evt in events:
+    for event in events:
         out.append(
-            {"name": evt.name, "attrs": _attrs(evt.attributes), "time": evt.timestamp}
+            {
+                "name": event.name,
+                "attrs": _attrs(event.attributes),
+                "time": event.timestamp,
+            }
         )
     return out
 
@@ -144,7 +148,7 @@ def _attrs(attrs):
     if isinstance(attrs, BoundedDict):
         return attrs._dict  # pylint: disable=protected-access
     if isinstance(attrs, MappingProxyType):
-        return attrs.copy()
+        return dict(attrs)
     return attrs
 
 

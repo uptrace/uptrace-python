@@ -5,8 +5,6 @@ import uptrace
 uptrace.configure_opentelemetry(
     # Set dsn or UPTRACE_DSN env var.
     dsn="",
-    service_name="myservice",
-    service_version="1.0.0",
 )
 
 from opentelemetry import trace
