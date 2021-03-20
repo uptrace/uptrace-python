@@ -20,8 +20,8 @@ _FALLBACK_CLIENT = Client(parse_dsn("https://<token>@api.uptrace.dev/<project_id
 # pylint: disable=too-many-arguments
 def configure_opentelemetry(
     dsn="",
-    service_name="",
-    service_version="",
+    service_name: Optional[str] = "",
+    service_version: Optional[str] = "",
     resource_attributes: Optional[Attributes] = None,
     resource: Optional[Resource] = None,
 ):
