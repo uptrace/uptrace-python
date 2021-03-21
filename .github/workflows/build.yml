@@ -1,4 +1,4 @@
-name: Python
+name: build
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    name: build
     runs-on: ubuntu-latest
     strategy:
       matrix:

@@ -1,6 +1,6 @@
 # Uptrace for Python
 
-[![Build Status](https://travis-ci.org/uptrace/uptrace-python.svg?branch=master)](https://travis-ci.org/uptrace/uptrace-python)
+![build workflow](https://github.com/uptrace/uptrace-python/actions/workflows/build.yml/badge.svg)
 [![Documentation](https://img.shields.io/badge/uptrace-documentation-informational)](https://docs.uptrace.dev/python/)
 
 <a href="https://docs.uptrace.dev/python/">
