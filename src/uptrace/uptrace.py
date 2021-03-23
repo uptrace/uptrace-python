@@ -7,9 +7,14 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from opentelemetry.sdk.resources import Attributes, Resource
+from opentelemetry.propagators import set_global_textmap
+from opentelemetry.propagators.composite import CompositeHTTPPropagator
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+from opentelemetry.trace.propagation.textmap import TextMapPropagator
+from opentelemetry.baggage.propagation import BaggagePropagator
 
 from .client import Client
-from .dsn import parse_dsn
+from .dsn import parse_dsn, DSN
 from .spanexp import Exporter
 
 logger = logging.getLogger(__name__)
@@ -24,7 +29,16 @@ def configure_opentelemetry(
     service_version: Optional[str] = "",
     resource_attributes: Optional[Attributes] = None,
     resource: Optional[Resource] = None,
+    text_map_propagator: Optional[TextMapPropagator] = None,
 ):
+    """
+    configureOpentelemetry configures OpenTelemetry to export data to Uptrace.
+    By default it:
+       - Creates tracer provider.
+       - Registers Uptrace span exporter.
+       - Sets tracecontext + baggage composite context propagator.
+    """
+
     global _CLIENT  # pylint: disable=global-statement
 
     if os.getenv("UPTRACE_DISABLED") == "True":
@@ -43,6 +57,24 @@ def configure_opentelemetry(
         logger.warning("Uptrace is disabled: %s", exc)
         return
 
+    _CLIENT = Client(dsn=dsn)
+    _configure_tracing(
+        dsn,
+        service_name=service_name,
+        service_version=service_version,
+        resource_attributes=resource_attributes,
+        resource=resource,
+    )
+    _configure_propagator(text_map_propagator=text_map_propagator)
+
+
+def _configure_tracing(
+    dsn: DSN,
+    service_name: Optional[str] = "",
+    service_version: Optional[str] = "",
+    resource_attributes: Optional[Attributes] = None,
+    resource: Optional[Resource] = None,
+):
     if trace._TRACER_PROVIDER is None:
         resource = _build_resource(
             resource, resource_attributes, service_name, service_version
@@ -59,7 +91,13 @@ def configure_opentelemetry(
     )
     trace.get_tracer_provider().add_span_processor(bsp)
 
-    _CLIENT = Client(dsn=dsn)
+
+def _configure_propagator(text_map_propagator: Optional[TextMapPropagator] = None):
+    if text_map_propagator is None:
+        text_map_propagator = CompositeHTTPPropagator(
+            [TraceContextTextMapPropagator(), BaggagePropagator()]
+        )
+    set_global_textmap(text_map_propagator)
 
 
 def trace_url(span: Optional[trace.Span] = None) -> str:

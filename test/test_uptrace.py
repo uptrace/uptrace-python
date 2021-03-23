@@ -24,7 +24,7 @@ def test_span_processor_no_dsn(caplog):
 
 def test_span_processor_invalid_dsn(caplog):
     uptrace.configure_opentelemetry(dsn="invalid")
-    assert "can't parse DSN: invalid" in caplog.text
+    assert "can't parse DSN=invalid" in caplog.text
 
 
 def test_trace_url():

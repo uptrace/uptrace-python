@@ -12,22 +12,22 @@ def parse_dsn(dsn: str) -> DSN:
 
     o = urlparse(dsn)
     if not o.scheme:
-        raise ValueError(f"can't parse DSN: {dsn}")
+        raise ValueError(f"can't parse DSN={dsn}")
 
     host = o.hostname
     if not host:
-        raise ValueError(f"DSN does not have host (DSN={dsn})")
+        raise ValueError(f"DSN={dsn} does not have a host")
 
     if o.port:
         host += f":{o.port}"
 
     project_id = remove_prefix(o.path, "/")
     if not project_id:
-        raise ValueError(f"DSN does not have project id (DSN={dsn})")
+        raise ValueError(f"DSN={dsn} does not have a project id")
 
     token = o.username
     if not token:
-        raise ValueError(f"DSN does not have token (DSN={dsn})")
+        raise ValueError(f"DSN={dsn} does not have a token")
 
     return DSN(
         scheme=o.scheme,
