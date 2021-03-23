@@ -34,9 +34,9 @@ def configure_opentelemetry(
     """
     configureOpentelemetry configures OpenTelemetry to export data to Uptrace.
     By default it:
-       - Creates tracer provider.
-       - Registers Uptrace span exporter.
-       - Sets tracecontext + baggage composite context propagator.
+       - creates tracer provider;
+       - registers Uptrace span exporter;
+       - sets tracecontext + baggage composite context propagator.
     """
 
     global _CLIENT  # pylint: disable=global-statement
