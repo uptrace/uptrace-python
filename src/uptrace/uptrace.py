@@ -7,11 +7,6 @@ from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
 from opentelemetry.sdk.resources import Attributes, Resource
-from opentelemetry.propagators import set_global_textmap
-from opentelemetry.propagators.composite import CompositeHTTPPropagator
-from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
-from opentelemetry.trace.propagation.textmap import TextMapPropagator
-from opentelemetry.baggage.propagation import BaggagePropagator
 
 from .client import Client
 from .dsn import parse_dsn, DSN
@@ -29,14 +24,12 @@ def configure_opentelemetry(
     service_version: Optional[str] = "",
     resource_attributes: Optional[Attributes] = None,
     resource: Optional[Resource] = None,
-    text_map_propagator: Optional[TextMapPropagator] = None,
 ):
     """
     configureOpentelemetry configures OpenTelemetry to export data to Uptrace.
     By default it:
        - creates tracer provider;
-       - registers Uptrace span exporter;
-       - sets tracecontext + baggage composite context propagator.
+       - registers Uptrace span exporter.
     """
 
     global _CLIENT  # pylint: disable=global-statement
@@ -65,7 +58,6 @@ def configure_opentelemetry(
         resource_attributes=resource_attributes,
         resource=resource,
     )
-    _configure_propagator(text_map_propagator=text_map_propagator)
 
 
 def _configure_tracing(
@@ -90,14 +82,6 @@ def _configure_tracing(
         schedule_delay_millis=5000,
     )
     trace.get_tracer_provider().add_span_processor(bsp)
-
-
-def _configure_propagator(text_map_propagator: Optional[TextMapPropagator] = None):
-    if text_map_propagator is None:
-        text_map_propagator = CompositeHTTPPropagator(
-            [TraceContextTextMapPropagator(), BaggagePropagator()]
-        )
-    set_global_textmap(text_map_propagator)
 
 
 def trace_url(span: Optional[trace.Span] = None) -> str:
