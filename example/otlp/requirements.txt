@@ -1,2 +1,2 @@
-opentelemetry-sdk==1.0.0rc1
-opentelemetry-exporter-otlp==1.0.0rc1
+opentelemetry-sdk==1.0.0
+opentelemetry-exporter-otlp==1.0.0
