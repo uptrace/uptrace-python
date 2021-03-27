@@ -5,7 +5,7 @@ from typing import Optional
 from opentelemetry import trace
 
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.resources import Attributes, Resource
 
 from .client import Client
@@ -75,7 +75,7 @@ def _configure_tracing(
         trace.set_tracer_provider(provider)
 
     exporter = Exporter(dsn)
-    bsp = BatchExportSpanProcessor(
+    bsp = BatchSpanProcessor(
         exporter,
         max_queue_size=1000,
         max_export_batch_size=1000,

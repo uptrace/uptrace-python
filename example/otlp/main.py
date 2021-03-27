@@ -9,7 +9,7 @@ from opentelemetry import trace
 from opentelemetry.exporter.otlp.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 resource = Resource(
     attributes={"service.name": "myservice", "service.version": "1.0.0"}
@@ -25,7 +25,7 @@ otlp_exporter = OTLPSpanExporter(
     headers=(("uptrace-token", os.environ.get("UPTRACE_TOKEN")),),
 )
 
-span_processor = BatchExportSpanProcessor(
+span_processor = BatchSpanProcessor(
     otlp_exporter,
     max_queue_size=1000,
     max_export_batch_size=1000,
