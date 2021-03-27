@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# https://opentelemetry-python.readthedocs.io/en/latest/exporter/otlp/otlp.html
-
 import os
 
 import grpc
