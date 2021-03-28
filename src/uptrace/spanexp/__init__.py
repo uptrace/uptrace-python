@@ -1,5 +1,5 @@
 """Uptrace span exporter for OpenTelemetry"""
 
-from .exporter import Exporter
+from .exporter import UptraceSpanExporter
 
-__all__ = ["Exporter"]
+__all__ = ["UptraceSpanExporter"]

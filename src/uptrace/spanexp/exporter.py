@@ -18,7 +18,9 @@ from ..dsn import DSN
 logger = logging.getLogger(__name__)
 
 
-class Exporter(sdk.SpanExporter):  # pylint:disable=too-many-instance-attributes
+class UptraceSpanExporter(
+    sdk.SpanExporter
+):  # pylint:disable=too-many-instance-attributes
     """Uptrace span exporter for OpenTelemetry."""
 
     def __init__(self, dsn: DSN):

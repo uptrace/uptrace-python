@@ -10,7 +10,7 @@ from opentelemetry.sdk.resources import Attributes, Resource
 
 from .client import Client
 from .dsn import parse_dsn, DSN
-from .spanexp import Exporter
+from .spanexp import UptraceSpanExporter
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +74,7 @@ def _configure_tracing(
         provider = TracerProvider(resource=resource)
         trace.set_tracer_provider(provider)
 
-    exporter = Exporter(dsn)
+    exporter = UptraceSpanExporter(dsn)
     bsp = BatchSpanProcessor(
         exporter,
         max_queue_size=1000,

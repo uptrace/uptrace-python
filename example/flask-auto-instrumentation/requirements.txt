@@ -1,0 +1,4 @@
+uptrace
+flask==1.1.2
+opentelemetry-instrumentation==0.19b0
+opentelemetry-instrumentation-flask==0.19b0

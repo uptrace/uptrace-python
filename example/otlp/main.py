@@ -14,7 +14,7 @@ resource = Resource(
 )
 tracer_provider = TracerProvider(resource=resource)
 
-# Load system credentials.
+# Load system TLS credentials.
 credentials = grpc.ssl_channel_credentials()
 otlp_exporter = OTLPSpanExporter(
     endpoint="otlp.uptrace.dev:4317",
