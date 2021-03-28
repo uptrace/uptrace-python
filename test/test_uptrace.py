@@ -6,7 +6,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.trace.status import StatusCode
 
 import uptrace
-from uptrace.spanexp import Exporter
+from uptrace.spanexp import UptraceSpanExporter
 
 
 def setup_function():
@@ -36,7 +36,7 @@ def test_trace_url():
     assert url.startswith("https://uptrace.dev/search/123?q=")
 
 
-@patch.object(Exporter, "_send")
+@patch.object(UptraceSpanExporter, "_send")
 def test_send(send):
     uptrace.configure_opentelemetry(
         dsn="https://<token>@api.uptrace.dev/<project_id>",

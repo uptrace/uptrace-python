@@ -16,11 +16,6 @@ UPTRACE_DSN="https://<token>@api.uptrace.dev/<project_id>" opentelemetry-instrum
 
 Open http://localhost:8000
 
-## How it works?
+## Documentation
 
-uptrace-python registers an OpenTelemetry distro using an entry point in [setup.cfg](/setup.cfg).
-`opentelemetry-instrument` utility is reponsible for loading all installed distros before running
-your app.
-
-When possible you should prefer using explicit instrumentation. For example, auto-instrumentation
-does not work with Flask in debug mode.
+See [Auto-instrumentation](https://docs.uptrace.dev/python-instrumentations/#auto-instrumentation)
