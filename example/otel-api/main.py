@@ -10,7 +10,6 @@ uptrace.configure_opentelemetry(
 # Create a tracer.
 
 from opentelemetry import trace
-from opentelemetry.trace.status import StatusCode
 
 tracer = trace.get_tracer("app_or_package_name", "1.0.0")
 
@@ -19,7 +18,7 @@ tracer = trace.get_tracer("app_or_package_name", "1.0.0")
 with tracer.start_as_current_span("main", kind=trace.SpanKind.SERVER) as span:
     if span.is_recording():
         span.set_attribute("key1", "value1")
-        # span.set_attributes({"key2": 123.456, "key3": [1, 2, 3]})
+        span.set_attributes({"key2": 123.456, "key3": [1, 2, 3]})
 
         span.add_event(
             "log",
@@ -30,9 +29,11 @@ with tracer.start_as_current_span("main", kind=trace.SpanKind.SERVER) as span:
             },
         )
 
-        span.record_exception(ValueError("error1"))
-
-        span.set_status(trace.Status(StatusCode.ERROR, "error description"))
+    try:
+        raise ValueError("error1")
+    except ValueError as exc:
+        span.record_exception(exc)
+        span.set_status(trace.Status(trace.StatusCode.ERROR, str(exc)))
 
 # Current span logic.
 
@@ -51,6 +52,6 @@ with tracer.start_as_current_span("main") as main:
 
 main = tracer.start_span("main", kind=trace.SpanKind.CLIENT)
 
-with tracer.use_span(main, end_on_exit=True):
+with trace.use_span(main, end_on_exit=True):
     if trace.get_current_span() == main:
         print("main is active (manually)")
