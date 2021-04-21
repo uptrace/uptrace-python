@@ -15,10 +15,10 @@ Edit `manage.py`:
 from opentelemetry.instrumentation.django import DjangoInstrumentor
 
 if __name__ == "__main__":
-    # Make sure sure that settings module is defined. It is used by DjangoInstrumentor.
+    # DjangoInstrumentor uses DJANGO_SETTINGS_MODULE to instrument the app. Make sure to define it.
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app_name.settings")
 
-    # Instrument Django by adding middleware etc.
+    # Instrument the app by adding middleware etc.
     DjangoInstrumentor().instrument()
 
     ...

@@ -18,4 +18,4 @@ Open http://localhost:8000
 
 ## Documentation
 
-See [Auto-instrumentation](https://docs.uptrace.dev/python-instrumentations/#auto-instrumentation)
+See [Auto-instrumentation](http://localhost:8081/guide/python.html#auto-instrumentation)
