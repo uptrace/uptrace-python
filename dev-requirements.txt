@@ -2,6 +2,6 @@ wheel
 mypy
 black==21.4b2
 pytest==6.2.2
-pylint==2.7.4
+pylint==2.8.2
 isort
 twine
