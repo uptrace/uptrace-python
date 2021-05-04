@@ -4,7 +4,7 @@
 [![Documentation](https://img.shields.io/badge/uptrace-documentation-informational)](https://docs.uptrace.dev/python/)
 
 <a href="https://docs.uptrace.dev/python/">
-  <img src="https://docs.uptrace.dev/devicons/python-original.svg" height="200px" />
+  <img src="https://docs.uptrace.dev/devicon/python-original.svg" height="200px" />
 </a>
 
 ## Installation
