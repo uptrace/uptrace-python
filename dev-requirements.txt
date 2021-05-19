@@ -1,7 +1,7 @@
 wheel
 mypy
 black==21.5b1
-pytest==6.2.2
+pytest==6.2.4
 pylint==2.8.2
 isort
 twine
