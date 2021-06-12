@@ -63,7 +63,7 @@ def test_send(send):
         "service.name": "unknown_service",
         "telemetry.sdk.language": "python",
         "telemetry.sdk.name": "opentelemetry",
-        "telemetry.sdk.version": "1.2.0",
+        "telemetry.sdk.version": "1.3.0",
     }
 
     events = span["events"]
