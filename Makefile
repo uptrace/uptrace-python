@@ -10,6 +10,6 @@ test:
 	nox -s test-3.8
 
 release: test
-	rm -r build dist
+	rm -rf build dist
 	python setup.py sdist bdist_wheel
 	twine upload --skip-existing --verbose dist/*
