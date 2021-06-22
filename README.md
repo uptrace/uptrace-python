@@ -51,4 +51,5 @@ with tracer.start_as_current_span("main") as span:
 trace.get_tracer_provider().shutdown()
 ```
 
-Please see [uptrace-python documentation](https://docs.uptrace.dev/python/) for more details.
+For more details, please see [documentation](https://docs.uptrace.dev/python/) and
+[examples](example).
