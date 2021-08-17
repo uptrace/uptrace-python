@@ -1,16 +1,17 @@
 import logging
 import os
+from socket import gethostname
 from typing import Optional
 
+import grpc
 from opentelemetry import trace
-
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.resources import Attributes, Resource
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 
 from .client import Client
 from .dsn import parse_dsn, DSN
-from .spanexp import UptraceSpanExporter
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +30,7 @@ def configure_opentelemetry(
     configureOpentelemetry configures OpenTelemetry to export data to Uptrace.
     By default it:
        - creates tracer provider;
-       - registers Uptrace span exporter.
+       - registers OTLP span exporter.
     """
 
     global _CLIENT  # pylint: disable=global-statement
@@ -74,7 +75,15 @@ def _configure_tracing(
         provider = TracerProvider(resource=resource)
         trace.set_tracer_provider(provider)
 
-    exporter = UptraceSpanExporter(dsn)
+    credentials = grpc.ssl_channel_credentials()
+    exporter = OTLPSpanExporter(
+        endpoint="https://otlp.uptrace.dev:4317",
+        credentials=credentials,
+        headers=(("uptrace-dsn", dsn.str),),
+        timeout=5,
+        compression=grpc.Compression.Gzip,
+    )
+
     bsp = BatchSpanProcessor(
         exporter,
         max_queue_size=1000,
@@ -104,7 +113,10 @@ def _build_resource(
     service_name: str,
     service_version: str,
 ) -> Resource:
-    attrs = {}
+    if resource:
+        return resource
+
+    attrs = {"host.name": gethostname()}
 
     if resource_attributes:
         attrs.update(resource_attributes)
@@ -113,10 +125,4 @@ def _build_resource(
     if service_version:
         attrs["service.version"] = service_version
 
-    if resource is None:
-        return Resource.create(attrs)
-
-    if len(attrs) == 0:
-        return resource
-
-    return resource.merge(Resource.create(attrs))
+    return Resource.create(attrs)

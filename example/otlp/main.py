@@ -4,10 +4,14 @@ import os
 
 import grpc
 from opentelemetry import trace
+
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+dsn = os.environ.get("UPTRACE_DSN")
+print("using DSN:", dsn)
 
 resource = Resource(
     attributes={"service.name": "myservice", "service.version": "1.0.0"}
@@ -17,10 +21,12 @@ tracer_provider = TracerProvider(resource=resource)
 # Load system TLS credentials.
 credentials = grpc.ssl_channel_credentials()
 otlp_exporter = OTLPSpanExporter(
-    endpoint="otlp.uptrace.dev:4317",
+    endpoint="https://otlp.uptrace.dev:4317",
     credentials=credentials,
     # Set the Uptrace dsn here or use UPTRACE_DSN env var.
-    headers=(("uptrace-dsn", os.environ.get("UPTRACE_DSN")),),
+    headers=(("uptrace-dsn", dsn),),
+    timeout=5,
+    compression=grpc.Compression.Gzip,
 )
 
 span_processor = BatchSpanProcessor(

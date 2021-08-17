@@ -6,7 +6,6 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.trace.status import StatusCode
 
 import uptrace
-from uptrace.spanexp import UptraceSpanExporter
 
 
 def setup_function():
@@ -34,43 +33,3 @@ def test_trace_url():
 
     url = uptrace.trace_url(span)
     assert url.startswith("https://uptrace.dev/search/123?q=")
-
-
-@patch.object(UptraceSpanExporter, "_send")
-def test_send(send):
-    uptrace.configure_opentelemetry(
-        dsn="https://<token>@api.uptrace.dev/<project_id>",
-        service_name="myservice",
-    )
-
-    uptrace.report_exception(ValueError("hello"))
-    trace.get_tracer_provider().shutdown()
-
-    send.assert_called()
-    spans = send.call_args[0][0]
-    assert len(spans) == 1, traces
-    span = spans[0]
-
-    assert type(span["startTime"]) is int
-    assert type(span["endTime"]) is int
-
-    assert span["kind"] == "internal"
-    assert span["statusCode"] == "unset"
-
-    assert span["tracerName"] == "uptrace-python"
-
-    assert span["resource"] == {
-        "service.name": "unknown_service",
-        "telemetry.sdk.language": "python",
-        "telemetry.sdk.name": "opentelemetry",
-        "telemetry.sdk.version": "1.3.0",
-    }
-
-    events = span["events"]
-    assert len(events) == 1
-
-    event = events[0]
-    attrs = event["attrs"]
-    assert attrs["exception.type"] == "ValueError"
-    assert attrs["exception.message"] == "hello"
-    assert attrs["exception.stacktrace"] == "NoneType: None\n"

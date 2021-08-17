@@ -1,4 +1,4 @@
-uptrace==1.1.0
+uptrace
 flask==1.1.2
-opentelemetry-instrumentation==0.20b0
-opentelemetry-instrumentation-flask==0.20b0
+opentelemetry-instrumentation==0.23b2
+opentelemetry-instrumentation-flask==0.23b2

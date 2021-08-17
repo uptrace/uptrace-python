@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 
 from .util import remove_prefix
 
-DSN = namedtuple("DSN", ["scheme", "host", "project_id", "token"])
+DSN = namedtuple("DSN", ["str", "scheme", "host", "project_id", "token"])
 
 
 def parse_dsn(dsn: str) -> DSN:
@@ -30,6 +30,7 @@ def parse_dsn(dsn: str) -> DSN:
         raise ValueError(f"DSN={dsn} does not have a token")
 
     return DSN(
+        str=dsn,
         scheme=o.scheme,
         host=host,
         project_id=project_id,

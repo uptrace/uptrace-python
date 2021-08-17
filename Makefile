@@ -2,6 +2,7 @@
 
 deps:
 	pip install nox
+	pip install .
 
 lint:
 	nox -s lint
