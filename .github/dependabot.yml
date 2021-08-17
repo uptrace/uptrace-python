@@ -1,16 +1,11 @@
 version: 2
 updates:
-- package-ecosystem: pip
-  directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: black
-    versions:
-    - 21.4b0
-    - 21.4b1
-  - dependency-name: pylint
-    versions:
-    - 2.7.3
-    - 2.8.1
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
