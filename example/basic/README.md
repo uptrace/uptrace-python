@@ -3,6 +3,6 @@
 To run this example:
 
 ```bash
-pip install -r requirements.txt
+pip install uptrace
 UPTRACE_DSN="https://<token>@api.uptrace.dev/<project_id>" ./main.py
 ```
