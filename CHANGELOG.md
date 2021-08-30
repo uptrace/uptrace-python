@@ -1,9 +1,14 @@
 # Changelog
 
+## v1.5.0 - 2021-08-30
+
+- Updated OpenTelemetry to
+  [v1.5.0](https://github.com/open-telemetry/opentelemetry-python/releases/tag/v1.5.0).
+
 ## v1.4.1 - 2021-08-17
 
 - Updated OpenTelemetry to
-  [v1.1.1](https://github.com/open-telemetry/opentelemetry-python/releases/tag/v1.4.1).
+  [v1.4.1](https://github.com/open-telemetry/opentelemetry-python/releases/tag/v1.4.1).
 - Switched to using OTLP protocol.
 
 ## v1.3.0 - 2021-06-12
