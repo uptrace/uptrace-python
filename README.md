@@ -1,7 +1,7 @@
 # Uptrace for Python
 
 ![build workflow](https://github.com/uptrace/uptrace-python/actions/workflows/build.yml/badge.svg)
-[![Documentation](https://img.shields.io/badge/uptrace-documentation-informational)](https://docs.uptrace.dev/python/)
+[![Documentation](https://img.shields.io/badge/uptrace-documentation-informational)](https://docs.uptrace.dev/guide/python.html)
 
 <a href="https://docs.uptrace.dev/guide/python.html">
   <img src="https://docs.uptrace.dev/devicon/python-original.svg" height="200px" />
@@ -12,7 +12,7 @@
 ## Introduction
 
 uptrace-python is an OpenTelemery distribution configured to export
-[traces](https://docs.uptrace.dev/tracing/#spans) to Uptrace.
+[traces](https://opentelemetry.uptrace.dev/guide/distributed-tracing.html) to Uptrace.
 
 ## Quickstart
 
@@ -51,5 +51,8 @@ with tracer.start_as_current_span("main") as span:
 trace.get_tracer_provider().shutdown()
 ```
 
-For more details, please see [documentation](https://docs.uptrace.dev/python/) and
-[examples](example).
+## Links
+
+- [Examples](example)
+- [Documentation](https://docs.uptrace.dev/guide/python.html)
+- [Instrumentations](https://opentelemetry.uptrace.dev/instrumentations.html?lang=python)
