@@ -95,10 +95,10 @@ def _configure_tracing(
 def trace_url(span: Optional[trace.Span] = None) -> str:
     """Returns the trace URL for the span."""
 
-    if _CLIENT is not None:
-        return _CLIENT.trace_url(span)
-
-    return _FALLBACK_CLIENT.trace_url(span)
+    if span is None:
+        span = trace.get_current_span()
+    trace_id = span.get_span_context().trace_id
+    return f"https://app.uptrace.dev/traces/{trace_id:0{32}x}"
 
 
 def report_exception(exc: Exception) -> None:

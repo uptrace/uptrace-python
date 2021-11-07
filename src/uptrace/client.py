@@ -29,17 +29,6 @@ class Client:
         span.record_exception(exc)
         span.end()
 
-    def trace_url(self, span: Optional[trace.Span] = None) -> str:
-        """Returns the trace URL for the span."""
-
-        if span is None:
-            span = trace.get_current_span()
-
-        dsn = self._dsn
-        host = remove_prefix(dsn.host, "api.")
-        trace_id = span.get_span_context().trace_id
-        return f"{dsn.scheme}://{host}/search/{dsn.project_id}?q={trace_id:0{32}x}"
-
     def _get_tracer(self):
         if self._tracer is None:
             self._tracer = trace.get_tracer("uptrace-python")
