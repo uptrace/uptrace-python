@@ -27,9 +27,8 @@ def test_span_processor_invalid_dsn(caplog):
 
 
 def test_trace_url():
-    uptrace.configure_opentelemetry(dsn="https://token@api.uptrace.dev/123")
     tracer = trace.get_tracer("tracer_name")
     span = tracer.start_span("main span")
 
     url = uptrace.trace_url(span)
-    assert url.startswith("https://uptrace.dev/search/123?q=")
+    assert url.startswith("https://app.uptrace.dev/traces/")
