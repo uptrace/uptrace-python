@@ -3,6 +3,7 @@
 import os
 import sys
 
+from opentelemetry.instrumentation.logging import LoggingInstrumentor
 from opentelemetry.instrumentation.django import DjangoInstrumentor
 
 import uptrace
@@ -17,6 +18,7 @@ def main():
         dsn="",
     )
 
+    LoggingInstrumentor().instrument(set_logging_format=True)
     DjangoInstrumentor().instrument()
 
     try:

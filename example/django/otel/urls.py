@@ -2,8 +2,8 @@ from django.urls import path
 
 from . import views
 
-app_name = "polls"
 urlpatterns = [
     path("", views.IndexView.as_view(), name="index"),
-    path("hello/<str:username>", views.IndexView.as_view(), name="hello"),
+    path("hello/<str:username>", views.HelloView.as_view(), name="hello"),
+    path("failing", views.FailingView.as_view(), name="failing"),
 ]
