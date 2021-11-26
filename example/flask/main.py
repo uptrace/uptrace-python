@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
 from flask import Flask
-from markupsafe import escape
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from opentelemetry import trace
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
 import uptrace
 
 uptrace.configure_opentelemetry(
@@ -13,6 +15,10 @@ uptrace.configure_opentelemetry(
 
 app = Flask(__name__)
 FlaskInstrumentor().instrument_app(app)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+db = SQLAlchemy(app)
+SQLAlchemyInstrumentor().instrument(engine=db.engine)
 
 
 @app.route("/")
@@ -35,6 +41,10 @@ def index():
 
 @app.route("/hello/<username>")
 def hello(username):
+    with db.engine.connect() as conn:
+        result = conn.execute(text("select 'hello world'"))
+        print(result.all())
+
     trace_url = uptrace.trace_url()
     return f"""
 <html>
