@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+requests
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-requests
+uptrace

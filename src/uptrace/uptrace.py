@@ -17,7 +17,7 @@ from .dsn import parse_dsn, DSN
 logger = logging.getLogger(__name__)
 
 _CLIENT = None
-_FALLBACK_CLIENT = Client(parse_dsn("https://<token>@api.uptrace.dev/<project_id>"))
+_FALLBACK_CLIENT = Client(parse_dsn("https://<key>@uptrace.dev/<project_id>"))
 
 # pylint: disable=too-many-arguments
 def configure_opentelemetry(

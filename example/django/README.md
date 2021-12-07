@@ -35,7 +35,7 @@ pip install -r requirements.txt
 Run Django app:
 
 ```shell
-UPTRACE_DSN="https://<token>@api.uptrace.dev/<project_id>" ./manage.py runserver
+UPTRACE_DSN="https://<key>@uptrace.dev/<project_id>" ./manage.py runserver
 ```
 
 Open http://localhost:8000
