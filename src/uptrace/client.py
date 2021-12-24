@@ -33,3 +33,9 @@ class Client:
         if self._tracer is None:
             self._tracer = trace.get_tracer("uptrace-python")
         return self._tracer
+
+    def trace_url(self, span: Optional[trace.Span] = None) -> str:
+        if span is None:
+            span = trace.get_current_span()
+        trace_id = span.get_span_context().trace_id
+        return f"{self._dsn.app_addr}/traces/{trace_id:0{32}x}"

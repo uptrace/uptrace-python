@@ -16,8 +16,7 @@ from .dsn import parse_dsn, DSN
 
 logger = logging.getLogger(__name__)
 
-_CLIENT = None
-_FALLBACK_CLIENT = Client(parse_dsn("https://<key>@uptrace.dev/<project_id>"))
+_CLIENT = Client(parse_dsn("https://<key>@uptrace.dev/<project_id>"))
 
 # pylint: disable=too-many-arguments
 def configure_opentelemetry(
@@ -38,10 +37,6 @@ def configure_opentelemetry(
 
     if os.getenv("UPTRACE_DISABLED") == "True":
         return
-
-    if _CLIENT is not None:
-        logger.warning("Uptrace is already configured")
-
     if not dsn:
         dsn = os.getenv("UPTRACE_DSN", "")
 
@@ -77,7 +72,7 @@ def _configure_tracing(
         trace.set_tracer_provider(provider)
 
     exporter = OTLPSpanExporter(
-        endpoint="https://otlp.uptrace.dev/v1/traces",
+        endpoint=f"{dsn.otlp_addr}/v1/traces",
         headers=(("uptrace-dsn", dsn.str),),
         timeout=5,
         compression=Compression.Gzip,
@@ -95,10 +90,7 @@ def _configure_tracing(
 def trace_url(span: Optional[trace.Span] = None) -> str:
     """Returns the trace URL for the span."""
 
-    if span is None:
-        span = trace.get_current_span()
-    trace_id = span.get_span_context().trace_id
-    return f"https://app.uptrace.dev/traces/{trace_id:0{32}x}"
+    return _CLIENT.trace_url(span)
 
 
 def report_exception(exc: Exception) -> None:

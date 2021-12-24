@@ -32,3 +32,13 @@ def test_trace_url():
 
     url = uptrace.trace_url(span)
     assert url.startswith("https://app.uptrace.dev/traces/")
+
+
+def test_dsn():
+    dsn = uptrace.parse_dsn("http://localhost:14318")
+    assert dsn.app_addr == "http://localhost:14318"
+    assert dsn.otlp_addr == "http://localhost:14318"
+
+    dsn = uptrace.parse_dsn("https://<key>@uptrace.dev/<project_id>")
+    assert dsn.app_addr == "https://app.uptrace.dev"
+    assert dsn.otlp_addr == "https://otlp.uptrace.dev"

@@ -3,7 +3,30 @@ from urllib.parse import urlparse
 
 from .util import remove_prefix
 
-DSN = namedtuple("DSN", ["str", "scheme", "host", "project_id", "token"])
+
+class DSN:
+    def __init__(self, dsn="", scheme="", host="", port="", project_id="", token=""):
+        self.str = dsn
+        self.scheme = scheme
+        self.host = host
+        self.port = port
+        self.project_id = project_id
+        self.token = token
+
+    def __str__(self):
+        return self.str
+
+    @property
+    def app_addr(self):
+        if self.host == "uptrace.dev":
+            return f"{self.scheme}://app.uptrace.dev"
+        return f"{self.scheme}://{self.host}:14318"
+
+    @property
+    def otlp_addr(self):
+        if self.host == "uptrace.dev":
+            return "https://otlp.uptrace.dev"
+        return f"{self.scheme}://{self.host}:{self.port}"
 
 
 def parse_dsn(dsn: str) -> DSN:
@@ -17,9 +40,11 @@ def parse_dsn(dsn: str) -> DSN:
     host = o.hostname
     if not host:
         raise ValueError(f"DSN={dsn} does not have a host")
+    if host == "api.uptrace.dev":
+        host = "uptrace.dev"
 
-    if o.port:
-        host += f":{o.port}"
+    if host != "uptrace.dev":
+        return DSN(dsn=dsn, scheme=o.scheme, host=host, port=o.port)
 
     project_id = remove_prefix(o.path, "/")
     if not project_id:
@@ -30,9 +55,10 @@ def parse_dsn(dsn: str) -> DSN:
         raise ValueError(f"DSN={dsn} does not have a token")
 
     return DSN(
-        str=dsn,
+        dsn=dsn,
         scheme=o.scheme,
         host=host,
+        port=o.port,
         project_id=project_id,
         token=token,
     )
