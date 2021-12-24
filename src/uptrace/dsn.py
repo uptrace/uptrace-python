@@ -20,7 +20,7 @@ class DSN:
     def app_addr(self):
         if self.host == "uptrace.dev":
             return f"{self.scheme}://app.uptrace.dev"
-        return f"{self.scheme}://{self.host}:14318"
+        return f"{self.scheme}://{self.host}:{self.port}"
 
     @property
     def otlp_addr(self):
