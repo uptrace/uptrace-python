@@ -1,6 +1,6 @@
 wheel
 mypy
-black==21.12b0
+black==22.1.0
 pytest==6.2.5
 pylint==2.12.2
 isort
