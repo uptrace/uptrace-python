@@ -23,9 +23,15 @@ class DSN:
         return f"{self.scheme}://{self.host}:{self.port}"
 
     @property
-    def otlp_addr(self):
+    def otlp_http_addr(self):
         if self.host == "uptrace.dev":
             return "https://otlp.uptrace.dev"
+        return f"{self.scheme}://{self.host}:{self.port}"
+
+    @property
+    def otlp_grpc_addr(self):
+        if self.host == "uptrace.dev":
+            return "https://otlp.uptrace.dev:4317"
         return f"{self.scheme}://{self.host}:{self.port}"
 
 
