@@ -4,19 +4,24 @@ from socket import gethostname
 from typing import Optional
 
 import grpc
-from opentelemetry import trace
+from opentelemetry import trace  # , _metrics
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+# from opentelemetry.sdk._metrics import MeterProvider
+# from opentelemetry.sdk._metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Attributes, Resource
 from opentelemetry.exporter.otlp.proto.http import Compression
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+
+# from opentelemetry.exporter.otlp.proto.grpc._metric_exporter import OTLPMetricExporter
 
 from .client import Client
 from .dsn import parse_dsn, DSN
 
 logger = logging.getLogger(__name__)
 
-_CLIENT = Client(parse_dsn("https://<key>@uptrace.dev/<project_id>"))
+_CLIENT = Client(parse_dsn("https://<token>@uptrace.dev/<project_id>"))
 
 # pylint: disable=too-many-arguments
 def configure_opentelemetry(
@@ -47,32 +52,25 @@ def configure_opentelemetry(
         logger.warning("Uptrace is disabled: %s", exc)
         return
 
-    _CLIENT = Client(dsn=dsn)
-    _configure_tracing(
-        dsn,
-        service_name=service_name,
-        service_version=service_version,
-        resource_attributes=resource_attributes,
-        resource=resource,
+    resource = _build_resource(
+        resource, resource_attributes, service_name, service_version
     )
+
+    _CLIENT = Client(dsn=dsn)
+    _configure_tracing(dsn, resource=resource)
+    # _configure_metrics(dsn, resource=resource)
 
 
 def _configure_tracing(
     dsn: DSN,
-    service_name: Optional[str] = "",
-    service_version: Optional[str] = "",
-    resource_attributes: Optional[Attributes] = None,
     resource: Optional[Resource] = None,
 ):
     if trace._TRACER_PROVIDER is None:
-        resource = _build_resource(
-            resource, resource_attributes, service_name, service_version
-        )
         provider = TracerProvider(resource=resource)
         trace.set_tracer_provider(provider)
 
     exporter = OTLPSpanExporter(
-        endpoint=f"{dsn.otlp_addr}/v1/traces",
+        endpoint=f"{dsn.otlp_http_addr}/v1/traces",
         headers=(("uptrace-dsn", dsn.str),),
         timeout=5,
         compression=Compression.Gzip,
@@ -85,6 +83,22 @@ def _configure_tracing(
         schedule_delay_millis=5000,
     )
     trace.get_tracer_provider().add_span_processor(bsp)
+
+
+# def _configure_metrics(
+#     dsn: DSN,
+#     resource: Optional[Resource] = None,
+# ):
+#     exporter = OTLPMetricExporter(
+#         endpoint=f"{dsn.otlp_grpc_addr}",
+#         headers=(("uptrace-dsn", dsn.str),),
+#         timeout=5,
+#         compression=grpc.Compression.Gzip,
+#     )
+#     reader = PeriodicExportingMetricReader(exporter, export_interval_millis=1000)
+#     provider = MeterProvider(metric_readers=[reader], resource=resource)
+#     print("SET", provider)
+#     _metrics.set_meter_provider(provider)
 
 
 def trace_url(span: Optional[trace.Span] = None) -> str:
