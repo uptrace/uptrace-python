@@ -1,4 +1,4 @@
-# Uptrace for Python example
+# Basic OpenTelemetry Python example
 
 To run this example:
 
