@@ -4,17 +4,16 @@ from socket import gethostname
 from typing import Optional
 
 import grpc
-from opentelemetry import trace  # , _metrics
+from opentelemetry import trace, _metrics
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
-# from opentelemetry.sdk._metrics import MeterProvider
-# from opentelemetry.sdk._metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk._metrics import MeterProvider
+from opentelemetry.sdk._metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Attributes, Resource
 from opentelemetry.exporter.otlp.proto.http import Compression
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-
-# from opentelemetry.exporter.otlp.proto.grpc._metric_exporter import OTLPMetricExporter
+from opentelemetry.exporter.otlp.proto.grpc._metric_exporter import OTLPMetricExporter
 
 from .client import Client
 from .dsn import parse_dsn, DSN
@@ -58,7 +57,7 @@ def configure_opentelemetry(
 
     _CLIENT = Client(dsn=dsn)
     _configure_tracing(dsn, resource=resource)
-    # _configure_metrics(dsn, resource=resource)
+    _configure_metrics(dsn, resource=resource)
 
 
 def _configure_tracing(
@@ -85,20 +84,19 @@ def _configure_tracing(
     trace.get_tracer_provider().add_span_processor(bsp)
 
 
-# def _configure_metrics(
-#     dsn: DSN,
-#     resource: Optional[Resource] = None,
-# ):
-#     exporter = OTLPMetricExporter(
-#         endpoint=f"{dsn.otlp_grpc_addr}",
-#         headers=(("uptrace-dsn", dsn.str),),
-#         timeout=5,
-#         compression=grpc.Compression.Gzip,
-#     )
-#     reader = PeriodicExportingMetricReader(exporter, export_interval_millis=1000)
-#     provider = MeterProvider(metric_readers=[reader], resource=resource)
-#     print("SET", provider)
-#     _metrics.set_meter_provider(provider)
+def _configure_metrics(
+    dsn: DSN,
+    resource: Optional[Resource] = None,
+):
+    exporter = OTLPMetricExporter(
+        endpoint=f"{dsn.otlp_grpc_addr}",
+        headers=(("uptrace-dsn", dsn.str),),
+        timeout=5,
+        compression=grpc.Compression.Gzip,
+    )
+    reader = PeriodicExportingMetricReader(exporter, export_interval_millis=1000)
+    provider = MeterProvider(metric_readers=[reader], resource=resource)
+    _metrics.set_meter_provider(provider)
 
 
 def trace_url(span: Optional[trace.Span] = None) -> str:
