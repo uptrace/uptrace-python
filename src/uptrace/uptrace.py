@@ -31,7 +31,7 @@ def configure_opentelemetry(
     resource: Optional[Resource] = None,
 ):
     """
-    configureOpentelemetry configures OpenTelemetry to export data to Uptrace.
+    configure_opentelemetry configures OpenTelemetry to export data to Uptrace.
     By default it:
        - creates tracer provider;
        - registers OTLP span exporter.
@@ -97,6 +97,10 @@ def _configure_metrics(
     reader = PeriodicExportingMetricReader(exporter, export_interval_millis=1000)
     provider = MeterProvider(metric_readers=[reader], resource=resource)
     _metrics.set_meter_provider(provider)
+
+
+def shutdown():
+    trace.get_tracer_provider().shutdown()
 
 
 def trace_url(span: Optional[trace.Span] = None) -> str:
