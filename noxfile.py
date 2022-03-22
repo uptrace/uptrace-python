@@ -1,7 +1,7 @@
 from nox import session
 
 
-@session(python=["3.6", "3.7", "3.8"], reuse_venv=True)
+@session(python=["3.8", "3.9"], reuse_venv=True)
 def test(session):
     session.install(".")
     session.install("-r", "dev-requirements.txt")
