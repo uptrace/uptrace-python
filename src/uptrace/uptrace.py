@@ -11,8 +11,7 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk._metrics import MeterProvider
 from opentelemetry.sdk._metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Attributes, Resource
-from opentelemetry.exporter.otlp.proto.http import Compression
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.exporter.otlp.proto.grpc._metric_exporter import OTLPMetricExporter
 
 from .client import Client
@@ -68,11 +67,13 @@ def _configure_tracing(
         provider = TracerProvider(resource=resource)
         trace.set_tracer_provider(provider)
 
+    credentials = grpc.ssl_channel_credentials()
     exporter = OTLPSpanExporter(
-        endpoint=f"{dsn.otlp_http_addr}/v1/traces",
+        endpoint=dsn.otlp_grpc_addr,
+        credentials=credentials,
         headers=(("uptrace-dsn", dsn.str),),
         timeout=5,
-        compression=Compression.Gzip,
+        compression=grpc.Compression.Gzip,
     )
 
     bsp = BatchSpanProcessor(

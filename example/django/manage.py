@@ -5,7 +5,6 @@ import sys
 
 from opentelemetry.instrumentation.logging import LoggingInstrumentor
 from opentelemetry.instrumentation.django import DjangoInstrumentor
-
 import uptrace
 
 
