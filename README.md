@@ -55,4 +55,4 @@ trace.get_tracer_provider().shutdown()
 
 - [Examples](example)
 - [Documentation](https://docs.uptrace.dev/guide/python.html)
-- [Instrumentations](https://opentelemetry.uptrace.dev/instrumentations.html?lang=python)
+- [Instrumentations](https://opentelemetry.uptrace.dev/instrumentations/?lang=python)

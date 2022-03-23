@@ -11,6 +11,8 @@ import uptrace
 uptrace.configure_opentelemetry(
     # Set dsn or UPTRACE_DSN env var.
     dsn="",
+    service_name="myservice",
+    service_version="1.0.0",
 )
 
 app = Flask(__name__)
@@ -34,7 +36,7 @@ def index():
     <li><a href="/hello/foo-bar">Hello foo-bar</a></li>
   </ul>
 
-  <p><a href="{trace_url}">{trace_url}</a></p>
+  <p>View trace: <a href="{trace_url}">{trace_url}</a></p>
 </html>
 """
 
