@@ -1,10 +1,15 @@
 # OpenTelemetry Python metrics example
 
-To run this example:
+To run this example, you need to install OpenTelemetry distro for Uptrace:
 
-```bash
+```shell
 pip install uptrace
-UPTRACE_DSN="https://<key>@uptrace.dev/<project_id>" ./main.py
 ```
 
-Then open Metrics tab in Uptrace and look for `first_counter` metric.
+The run the example passing Uptrace DSN in env variables:
+
+```shell
+UPTRACE_DSN="https://<key>@uptrace.dev/<project_id>" python3 main.py
+```
+
+Then open Metrics tab in Uptrace.
