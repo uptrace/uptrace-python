@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.11.1 - 2022-05-12
+
+- Updated OpenTelemetry to
+  [v1.11.1](https://github.com/open-telemetry/opentelemetry-python/releases/tag/v1.11.1).
+
 ## v1.10.0 - 2022-03-11
 
 - Updated OpenTelemetry to

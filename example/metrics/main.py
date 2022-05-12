@@ -3,16 +3,17 @@
 import time
 import random
 import threading
+from typing import Iterable
 
 import uptrace
 from opentelemetry import _metrics
-from opentelemetry._metrics.measurement import Measurement
+from opentelemetry._metrics.observation import Observation
 
 meter = _metrics.get_meter("github.com/uptrace/uptrace-python")
 
 
 def counter():
-    counter = meter.create_counter(name="some.prefix.counter", description="TODO")
+    counter = meter.create_counter("some.prefix.counter", description="TODO")
 
     while True:
         counter.add(1)
@@ -21,7 +22,7 @@ def counter():
 
 def up_down_counter():
     counter = meter.create_up_down_counter(
-        name="some.prefix.up_down_counter", description="TODO"
+        "some.prefix.up_down_counter", description="TODO"
     )
 
     while True:
@@ -34,7 +35,7 @@ def up_down_counter():
 
 def histogram():
     histogram = meter.create_histogram(
-        name="some.prefix.histogram",
+        "some.prefix.histogram",
         description="TODO",
         unit="microseconds",
     )
@@ -47,34 +48,34 @@ def histogram():
 def counter_observer():
     number = 0
 
-    def callback():
+    def callback() -> Iterable[Observation]:
         nonlocal number
         number += 1
-        return [Measurement(int(number))]
+        yield Observation(int(number), {})
 
     counter = meter.create_observable_counter(
-        name="some.prefix.counter_observer", callback=callback, description="TODO"
+        "some.prefix.counter_observer", [callback], description="TODO"
     )
 
 
 def up_down_counter_observer():
-    def callback():
-        return [Measurement(random.random())]
+    def callback() -> Iterable[Observation]:
+        yield Observation(random.random(), {})
 
     counter = meter.create_observable_up_down_counter(
-        name="some.prefix.up_down_counter_observer",
-        callback=callback,
+        "some.prefix.up_down_counter_observer",
+        [callback],
         description="TODO",
     )
 
 
 def gauge_observer():
-    def callback():
-        return [Measurement(random.random())]
+    def callback() -> Iterable[Observation]:
+        yield Observation(random.random(), {})
 
     gauge = meter.create_observable_gauge(
-        name="some.prefix.gauge_observer",
-        callback=callback,
+        "some.prefix.gauge_observer",
+        [callback],
         description="TODO",
     )
 
