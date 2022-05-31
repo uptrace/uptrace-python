@@ -2,6 +2,7 @@
 
 ![build workflow](https://github.com/uptrace/uptrace-python/actions/workflows/build.yml/badge.svg)
 [![Documentation](https://img.shields.io/badge/uptrace-documentation-informational)](https://docs.uptrace.dev/guide/python.html)
+[![Chat](https://img.shields.io/matrix/uptrace:matrix.org)](https://matrix.to/#/#uptrace:matrix.org)
 
 <a href="https://docs.uptrace.dev/guide/python.html">
   <img src="https://docs.uptrace.dev/devicon/python-original.svg" height="200px" />
