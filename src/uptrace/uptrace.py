@@ -4,15 +4,15 @@ from socket import gethostname
 from typing import Optional
 
 import grpc
-from opentelemetry import trace, _metrics
+from opentelemetry import trace, metrics
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
-from opentelemetry.sdk._metrics import MeterProvider
-from opentelemetry.sdk._metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.resources import Attributes, Resource
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-from opentelemetry.exporter.otlp.proto.grpc._metric_exporter import OTLPMetricExporter
+from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
 
 from .client import Client
 from .dsn import parse_dsn, DSN
@@ -97,7 +97,7 @@ def _configure_metrics(
     )
     reader = PeriodicExportingMetricReader(exporter, export_interval_millis=1000)
     provider = MeterProvider(metric_readers=[reader], resource=resource)
-    _metrics.set_meter_provider(provider)
+    metrics.set_meter_provider(provider)
 
 
 def shutdown():

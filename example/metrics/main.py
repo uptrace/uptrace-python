@@ -6,10 +6,10 @@ import threading
 from typing import Iterable
 
 import uptrace
-from opentelemetry import _metrics
-from opentelemetry._metrics.observation import Observation
+from opentelemetry import metrics
+from opentelemetry.metrics import CallbackOptions, Observation
 
-meter = _metrics.get_meter("github.com/uptrace/uptrace-python")
+meter = metrics.get_meter("github.com/uptrace/uptrace-python", "1.0.0")
 
 
 def counter():
@@ -48,7 +48,7 @@ def histogram():
 def counter_observer():
     number = 0
 
-    def callback() -> Iterable[Observation]:
+    def callback(options: CallbackOptions) -> Iterable[Observation]:
         nonlocal number
         number += 1
         yield Observation(int(number), {})
@@ -59,7 +59,7 @@ def counter_observer():
 
 
 def up_down_counter_observer():
-    def callback() -> Iterable[Observation]:
+    def callback(options: CallbackOptions) -> Iterable[Observation]:
         yield Observation(random.random(), {})
 
     counter = meter.create_observable_up_down_counter(
@@ -70,7 +70,7 @@ def up_down_counter_observer():
 
 
 def gauge_observer():
-    def callback() -> Iterable[Observation]:
+    def callback(options: CallbackOptions) -> Iterable[Observation]:
         yield Observation(random.random(), {})
 
     gauge = meter.create_observable_gauge(
