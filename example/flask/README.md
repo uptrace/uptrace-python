@@ -15,4 +15,4 @@ UPTRACE_DSN="https://<key>@uptrace.dev/<project_id>" ./main.py
 Open http://localhost:8000
 
 For more details, see
-[Instrumenting Flask with OpenTelemetry](https://opentelemetry.uptrace.dev/instrumentations/python-flask.html)
+[Instrumenting Flask with OpenTelemetry](https://uptrace.dev/opentelemetry/instrumentations/python-flask.html)
