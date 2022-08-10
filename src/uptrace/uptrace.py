@@ -118,6 +118,11 @@ def shutdown():
     trace.get_tracer_provider().shutdown()
 
 
+def force_flush():
+    trace.get_tracer_provider().force_flush()
+    metrics.get_meter_provider().force_flush()
+
+
 def trace_url(span: Optional[trace.Span] = None) -> str:
     """Returns the trace URL for the span."""
 

@@ -27,4 +27,4 @@ with tracer.start_as_current_span("main-operation") as main:
     print("trace:", uptrace.trace_url(main))
 
 # Send buffered spans and free resources.
-trace.get_tracer_provider().shutdown()
+uptrace.shutdown()
