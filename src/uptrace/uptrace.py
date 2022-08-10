@@ -8,8 +8,12 @@ from opentelemetry import trace, metrics
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
+from opentelemetry.sdk import metrics as sdkmetrics
 from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.metrics.export import (
+    PeriodicExportingMetricReader,
+    AggregationTemporality,
+)
 from opentelemetry.sdk.resources import Attributes, Resource
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
@@ -20,6 +24,15 @@ from .dsn import parse_dsn, DSN
 logger = logging.getLogger(__name__)
 
 _CLIENT = Client(parse_dsn("https://<token>@uptrace.dev/<project_id>"))
+
+temporality_delta = {
+    sdkmetrics.Counter: AggregationTemporality.DELTA,
+    sdkmetrics.UpDownCounter: AggregationTemporality.DELTA,
+    sdkmetrics.Histogram: AggregationTemporality.DELTA,
+    sdkmetrics.ObservableCounter: AggregationTemporality.DELTA,
+    sdkmetrics.ObservableUpDownCounter: AggregationTemporality.DELTA,
+    sdkmetrics.ObservableGauge: AggregationTemporality.DELTA,
+}
 
 # pylint: disable=too-many-arguments
 def configure_opentelemetry(
@@ -94,8 +107,9 @@ def _configure_metrics(
         headers=(("uptrace-dsn", dsn.str),),
         timeout=5,
         compression=grpc.Compression.Gzip,
+        preferred_temporality=temporality_delta,
     )
-    reader = PeriodicExportingMetricReader(exporter, export_interval_millis=1000)
+    reader = PeriodicExportingMetricReader(exporter)
     provider = MeterProvider(metric_readers=[reader], resource=resource)
     metrics.set_meter_provider(provider)
 
