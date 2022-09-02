@@ -1,19 +1,18 @@
 # Uptrace for Python
 
 ![build workflow](https://github.com/uptrace/uptrace-python/actions/workflows/build.yml/badge.svg)
-[![Documentation](https://img.shields.io/badge/uptrace-documentation-informational)](https://uptrace.dev/docs/python.html)
-[![Chat](https://discordapp.com/api/guilds/1000404569202884628/widget.png)](https://discord.gg/YF8tdP8Pmk)
+[![Documentation](https://img.shields.io/badge/uptrace-documentation-informational)](https://uptrace.dev/get/uptrace-python.html)
+[![Chat](https://img.shields.io/badge/-telegram-red?color=white&logo=telegram&logoColor=black)](https://t.me/uptrace)
 
-<a href="https://uptrace.dev/docs/python.html">
-  <img src="https://uptrace.dev/docs/devicon/python-original.svg" height="200px" />
+<a href="https://uptrace.dev/get/uptrace-python.html">
+  <img src="https://uptrace.dev/get/devicon/python-original.svg" height="200px" />
 </a>
-
-## Installation
 
 ## Introduction
 
 uptrace-python is an OpenTelemery distribution configured to export
-[traces](https://uptrace.dev/opentelemetry/distributed-tracing.html) to Uptrace.
+[traces](https://uptrace.dev/opentelemetry/distributed-tracing.html) and
+[metrics](https://uptrace.dev/opentelemetry/metrics.html) to Uptrace.
 
 ## Quickstart
 
@@ -55,5 +54,5 @@ trace.get_tracer_provider().shutdown()
 ## Links
 
 - [Examples](example)
-- [Documentation](https://uptrace.dev/docs/python.html)
+- [Documentation](https://uptrace.dev/get/uptrace-python.html)
 - [Instrumentations](https://uptrace.dev/opentelemetry/instrumentations/?lang=python)
