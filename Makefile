@@ -8,7 +8,7 @@ lint:
 	nox -s lint
 
 test:
-	nox -s test-3.8
+	nox -s test-3.10
 
 release: test
 	rm -rf build dist

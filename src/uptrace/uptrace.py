@@ -4,22 +4,25 @@ from socket import gethostname
 from typing import Optional
 
 import grpc
-from opentelemetry import trace, metrics
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
+from opentelemetry import metrics, trace
+from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
+    OTLPMetricExporter,
+)
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+    OTLPSpanExporter,
+)
 from opentelemetry.sdk import metrics as sdkmetrics
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import (
-    PeriodicExportingMetricReader,
     AggregationTemporality,
+    PeriodicExportingMetricReader,
 )
 from opentelemetry.sdk.resources import Attributes, Resource
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 from .client import Client
-from .dsn import parse_dsn, DSN
+from .dsn import DSN, parse_dsn
 
 logger = logging.getLogger(__name__)
 
@@ -76,9 +79,8 @@ def _configure_tracing(
     dsn: DSN,
     resource: Optional[Resource] = None,
 ):
-    if trace._TRACER_PROVIDER is None:
-        provider = TracerProvider(resource=resource)
-        trace.set_tracer_provider(provider)
+    provider = TracerProvider(resource=resource)
+    trace.set_tracer_provider(provider)
 
     credentials = grpc.ssl_channel_credentials()
     exporter = OTLPSpanExporter(

@@ -1,14 +1,14 @@
 """Uptrace exporter for OpenTelemetry"""
 
+from .dsn import parse_dsn
 from .uptrace import (
     configure_opentelemetry,
     force_flush,
-    shutdown,
     report_exception,
+    shutdown,
     trace_url,
 )
 from .version import __version__
-from .dsn import parse_dsn
 
 __all__ = [
     "configure_opentelemetry",

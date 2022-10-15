@@ -5,7 +5,6 @@ from typing import Optional
 from opentelemetry import trace
 
 from .dsn import DSN
-from .util import remove_prefix
 
 DUMMY_SPAN_NAME = "__dummy__"
 

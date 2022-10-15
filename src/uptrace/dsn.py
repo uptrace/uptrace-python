@@ -1,10 +1,10 @@
-from collections import namedtuple
 from urllib.parse import urlparse
 
 from .util import remove_prefix
 
 
 class DSN:
+    # pylint:disable=too-many-arguments
     def __init__(self, dsn="", scheme="", host="", port="", project_id="", token=""):
         self.str = dsn
         self.scheme = scheme
