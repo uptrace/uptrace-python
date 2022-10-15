@@ -1,7 +1,7 @@
 .PHONY: all test
 
 deps:
-	pip install nox
+	pip install -r dev-requirements.txt
 	pip install .
 
 lint:
