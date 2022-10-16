@@ -9,7 +9,7 @@ pip install -r requirements.txt
 Run Flask app:
 
 ```shell
-UPTRACE_DSN="https://<key>@uptrace.dev/<project_id>" ./main.py
+UPTRACE_DSN="https://<token>@uptrace.dev/<project_id>" python3 main.py
 ```
 
 Open http://localhost:8000

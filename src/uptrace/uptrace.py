@@ -48,8 +48,10 @@ def configure_opentelemetry(
     """
     configure_opentelemetry configures OpenTelemetry to export data to Uptrace.
     By default it:
-       - creates tracer provider;
-       - registers OTLP span exporter.
+       - Creates tracer provider.
+       - Registers OTLP span exporter.
+       - Creates metrics provider.
+       - Registers OTLP metrics exporter.
     """
 
     global _CLIENT  # pylint: disable=global-statement
@@ -63,8 +65,15 @@ def configure_opentelemetry(
         dsn = parse_dsn(dsn)
     except ValueError as exc:
         # pylint:disable=logging-not-lazy
-        logger.warning("Uptrace is disabled: %s", exc)
+        logger.warning("invalid Uptrace DSN: %s (Uptrace is disabled)", exc)
         return
+
+    if dsn.token == "<token>" or dsn.project_id == "<project_id>":
+        logger.warning("dummy DSN detected: %s (Uptrace is disabled)", dsn)
+        return
+
+    if dsn.port == "14318":
+        logger.warning("uptrace-python uses OTLP/gRPC exporter, but got port %s", dsn.port)
 
     resource = _build_resource(
         resource, resource_attributes, service_name, service_version

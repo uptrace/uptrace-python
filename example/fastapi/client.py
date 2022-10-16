@@ -8,7 +8,7 @@ import uptrace
 uptrace.configure_opentelemetry(
     # Copy DSN here or use UPTRACE_DSN env var.
     # dsn="",
-    service_name="myservice",
+    service_name="client_name",
     service_version="1.0.0",
 )
 RequestsInstrumentor().instrument()

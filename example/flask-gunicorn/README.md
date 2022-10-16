@@ -12,7 +12,7 @@ pip install -r requirements.txt
 Run Flask app using Gunicorn:
 
 ```shell
-UPTRACE_DSN="https://<key>@uptrace.dev/<project_id>" gunicorn main -c gunicorn.config.py
+UPTRACE_DSN="https://<token>@uptrace.dev/<project_id>" gunicorn main -c gunicorn.config.py
 ```
 
 Open http://localhost:8000

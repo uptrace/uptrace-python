@@ -12,7 +12,7 @@ pip install -r requirements.txt
 Run Flask app using uWSGI:
 
 ```shell
-UPTRACE_DSN="https://<key>@uptrace.dev/<project_id>" uwsgi --http=:8000 --wsgi-file=main.py --callable=application --master --enable-threads
+UPTRACE_DSN="https://<token>@uptrace.dev/<project_id>" uwsgi --http=:8000 --wsgi-file=main.py --callable=application --master --enable-threads
 ```
 
 Open http://localhost:8000

@@ -15,6 +15,8 @@ def main():
     uptrace.configure_opentelemetry(
         # Copy DSN here or use UPTRACE_DSN env var.
         # dsn="",
+        service_name="app_name",
+        service_version="1.0.0",
     )
 
     LoggingInstrumentor().instrument(set_logging_format=True)

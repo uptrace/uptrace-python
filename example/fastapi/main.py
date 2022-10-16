@@ -11,6 +11,8 @@ app = FastAPI()
 uptrace.configure_opentelemetry(
     # Copy DSN here or use UPTRACE_DSN env var.
     # dsn="",
+    service_name="server_name",
+    service_version="1.0.0",
 )
 FastAPIInstrumentor.instrument_app(app)
 
