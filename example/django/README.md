@@ -14,7 +14,7 @@ Run Django app:
 UPTRACE_DSN="https://<token>@uptrace.dev/<project_id>" ./manage.py runserver
 ```
 
-And open http://localhost:8000
+And open http://127.0.0.1:8000
 
 For more details, see
 [Instrumenting Django with OpenTelemetry](https://uptrace.dev/opentelemetry/instrumentations/python-django.html)
