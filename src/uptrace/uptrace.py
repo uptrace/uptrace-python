@@ -22,6 +22,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 from .client import Client
+from .id_generator import UptraceIdGenerator
 from .dsn import DSN, parse_dsn
 
 logger = logging.getLogger(__name__)
@@ -42,6 +43,7 @@ def configure_opentelemetry(
     dsn="",
     service_name: Optional[str] = "",
     service_version: Optional[str] = "",
+    deployment_environment: Optional[str] = "",
     resource_attributes: Optional[Attributes] = None,
     resource: Optional[Resource] = None,
 ):
@@ -76,7 +78,7 @@ def configure_opentelemetry(
         logger.warning("uptrace-python uses OTLP/gRPC exporter, but got port %s", dsn.port)
 
     resource = _build_resource(
-        resource, resource_attributes, service_name, service_version
+        resource, resource_attributes, service_name, service_version, deployment_environment,
     )
 
     _CLIENT = Client(dsn=dsn)
@@ -88,7 +90,7 @@ def _configure_tracing(
     dsn: DSN,
     resource: Optional[Resource] = None,
 ):
-    provider = TracerProvider(resource=resource)
+    provider = TracerProvider(resource=resource, id_generator=UptraceIdGenerator())
     trace.set_tracer_provider(provider)
 
     credentials = grpc.ssl_channel_credentials()
@@ -150,6 +152,7 @@ def _build_resource(
     resource_attributes: Attributes,
     service_name: str,
     service_version: str,
+    deployment_environment: str,
 ) -> Resource:
     if resource:
         return resource
@@ -162,5 +165,7 @@ def _build_resource(
         attrs["service.name"] = service_name
     if service_version:
         attrs["service.version"] = service_version
+    if deployment_environment:
+        attrs["deployment.environment"] = deployment_environment
 
     return Resource.create(attrs)
