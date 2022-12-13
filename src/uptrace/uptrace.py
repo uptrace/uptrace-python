@@ -75,10 +75,16 @@ def configure_opentelemetry(
         return
 
     if dsn.port == "14318":
-        logger.warning("uptrace-python uses OTLP/gRPC exporter, but got port %s", dsn.port)
+        logger.warning(
+            "uptrace-python uses OTLP/gRPC exporter, but got port %s", dsn.port
+        )
 
     resource = _build_resource(
-        resource, resource_attributes, service_name, service_version, deployment_environment,
+        resource,
+        resource_attributes,
+        service_name,
+        service_version,
+        deployment_environment,
     )
 
     _CLIENT = Client(dsn=dsn)
