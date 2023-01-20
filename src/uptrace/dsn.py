@@ -53,12 +53,7 @@ def parse_dsn(dsn: str) -> DSN:
         return DSN(dsn=dsn, scheme=o.scheme, host=host, port=o.port)
 
     project_id = remove_prefix(o.path, "/")
-    if not project_id:
-        raise ValueError(f"DSN={dsn} does not have a project id")
-
     token = o.username
-    if not token:
-        raise ValueError(f"DSN={dsn} does not have a token")
 
     return DSN(
         dsn=dsn,
