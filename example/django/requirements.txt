@@ -1,4 +1,4 @@
-uptrace==1.14.0
+uptrace==1.16.0
 django==3.1.14
-opentelemetry-instrumentation-logging==0.35b0
-opentelemetry-instrumentation-django==0.35b0
+opentelemetry-instrumentation-logging==0.37b0
+opentelemetry-instrumentation-django==0.37b0
