@@ -1,0 +1,3 @@
+uptrace==1.16.0
+pyramid==2.0.1
+opentelemetry-instrumentation-pyramid==0.37b0
