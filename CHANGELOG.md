@@ -1,5 +1,15 @@
 # Changelog
 
+## v.17.0 - 2023-03-28
+
+- Updated Opentelemetry to
+  [v.17.0](https://github.com/open-telemetry/opentelemetry-python/blob/main/CHANGELOG.md#version-1170038b0-2023-03-22).
+
+## v.16.0 - 2023-02-17
+
+- Updated Opentelemetry to
+  [v.16.0](https://github.com/open-telemetry/opentelemetry-python/blob/main/CHANGELOG.md#version-1160037b0-2023-02-17).
+
 ## v1.15.0 - 2022-12-13
 
 - Updated OpenTelemetry to
