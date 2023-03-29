@@ -1,0 +1,6 @@
+uptrace==1.17.0
+django==4.1.7
+psycopg2==2.9.5
+opentelemetry-instrumentation-logging==0.38b0
+opentelemetry-instrumentation-django==0.38b0
+opentelemetry-instrumentation-psycopg2==0.38b0
