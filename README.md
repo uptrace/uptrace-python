@@ -30,25 +30,34 @@ Run the [basic example](example/basic) below using the DSN from the Uptrace proj
 import uptrace
 from opentelemetry import trace
 
-# Set dsn or UPTRACE_DSN env var.
+# Configure OpenTelemetry with sensible defaults.
 uptrace.configure_opentelemetry(
-    dsn="", service_name="myservice", service_version="1.0.0"
+    # Set dsn or UPTRACE_DSN env var.
+    dsn="",
+    service_name="myservice",
+    service_version="1.0.0",
 )
+
+# Create a tracer. Usually, tracer is a global variable.
 tracer = trace.get_tracer("app_or_package_name", "1.0.0")
 
-with tracer.start_as_current_span("main") as span:
-    with tracer.start_as_current_span("child1") as span:
-        span.set_attribute("key1", "value1")
-        span.record_exception(ValueError("error1"))
+# Create a root span (a trace) to measure some operation.
+with tracer.start_as_current_span("main-operation") as main:
+    with tracer.start_as_current_span("GET /posts/:id") as child1:
+        child1.set_attribute("http.method", "GET")
+        child1.set_attribute("http.route", "/posts/:id")
+        child1.set_attribute("http.url", "http://localhost:8080/posts/123")
+        child1.set_attribute("http.status_code", 200)
+        child1.record_exception(ValueError("error1"))
 
-    with tracer.start_as_current_span("child2") as span:
-        span.set_attribute("key2", "value2")
-        span.set_attribute("key3", 123.456)
+    with tracer.start_as_current_span("SELECT") as child2:
+        child2.set_attribute("db.system", "mysql")
+        child2.set_attribute("db.statement", "SELECT * FROM posts LIMIT 100")
 
-    print("trace:", uptrace.trace_url(span))
+    print("trace:", uptrace.trace_url(main))
 
-# Send buffered spans.
-trace.get_tracer_provider().shutdown()
+# Send buffered spans and free resources.
+uptrace.shutdown()
 ```
 
 ## Links

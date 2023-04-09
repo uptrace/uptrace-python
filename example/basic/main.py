@@ -16,13 +16,16 @@ tracer = trace.get_tracer("app_or_package_name", "1.0.0")
 
 # Create a root span (a trace) to measure some operation.
 with tracer.start_as_current_span("main-operation") as main:
-    with tracer.start_as_current_span("child1-of-main") as child1:
-        child1.set_attribute("key1", "value1")
+    with tracer.start_as_current_span("GET /posts/:id") as child1:
+        child1.set_attribute("http.method", "GET")
+        child1.set_attribute("http.route", "/posts/:id")
+        child1.set_attribute("http.url", "http://localhost:8080/posts/123")
+        child1.set_attribute("http.status_code", 200)
         child1.record_exception(ValueError("error1"))
 
-    with tracer.start_as_current_span("child2-of-main") as child2:
-        child2.set_attribute("key2", "value2")
-        child2.set_attribute("key3", 123.456)
+    with tracer.start_as_current_span("SELECT") as child2:
+        child2.set_attribute("db.system", "mysql")
+        child2.set_attribute("db.statement", "SELECT * FROM posts LIMIT 100")
 
     print("trace:", uptrace.trace_url(main))
 
