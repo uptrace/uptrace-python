@@ -1,6 +1,6 @@
 fastapi
 uvicorn
 requests
-opentelemetry-instrumentation-fastapi==0.37b0
-opentelemetry-instrumentation-requests==0.37b0
-uptrace==1.16.0
+opentelemetry-instrumentation-fastapi==0.38b0
+opentelemetry-instrumentation-requests==0.38b0
+uptrace==1.17.1

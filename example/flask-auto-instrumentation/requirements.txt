@@ -1,5 +1,5 @@
-uptrace==1.16.0
+uptrace==1.17.1
 flask==2.3.2
-itsdangerous==2.0.1
-opentelemetry-instrumentation==0.34b0
-opentelemetry-instrumentation-flask==0.37b0
+itsdangerous==2.1.2
+opentelemetry-instrumentation==0.38b0
+opentelemetry-instrumentation-flask==0.38b0

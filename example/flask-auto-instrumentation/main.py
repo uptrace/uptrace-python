@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
 
+import logging
+
 from flask import Flask
 from markupsafe import escape
 from opentelemetry import trace
 import uptrace
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def index():
+    logger.error("hello from Flask logs")
+
     trace_url = uptrace.trace_url()
 
     return f"""
