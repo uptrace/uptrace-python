@@ -24,10 +24,8 @@ tracer_provider = TracerProvider(
 )
 trace.set_tracer_provider(tracer_provider)
 
-credentials = grpc.ssl_channel_credentials()
 exporter = OTLPSpanExporter(
     endpoint="otlp.uptrace.dev:4317",
-    credentials=credentials,
     # Set the Uptrace dsn here or use UPTRACE_DSN env var.
     headers=(("uptrace-dsn", dsn),),
     timeout=5,

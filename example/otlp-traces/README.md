@@ -1,4 +1,4 @@
-# Using OTLP exporter with Uptrace
+# Configuring OTLP traces exporter for Uptrace
 
 This example shows how to configure
 [OTLP](https://opentelemetry-python.readthedocs.io/en/latest/exporter/otlp/otlp.html) to export
@@ -13,5 +13,5 @@ pip install -r requirements.txt
 Run:
 
 ```go
-UPTRACE_TOKEN=<token> ./main.py
+UPTRACE_DSN=https://<token>@api.uptrace.dev/<project_id> ./main.py
 ```

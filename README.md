@@ -10,61 +10,14 @@
 
 ## Introduction
 
-uptrace-python is an OpenTelemery distribution configured to export
-[traces](https://uptrace.dev/opentelemetry/distributed-tracing.html) and
-[metrics](https://uptrace.dev/opentelemetry/metrics.html) to Uptrace.
+uptrace-python is a thin wrapper over
+[opentelemetry-python](https://github.com/open-telemetry/opentelemetry-python) that exports
+[traces](https://uptrace.dev/opentelemetry/distributed-tracing.html),
+[metrics](https://uptrace.dev/opentelemetry/metrics.html), and logs to Uptrace.
 
-## Quickstart
-
-Install uptrace-python:
-
-```bash
-pip install uptrace
-```
-
-Run the [basic example](example/basic) below using the DSN from the Uptrace project settings page.
-
-```python
-#!/usr/bin/env python3
-
-import uptrace
-from opentelemetry import trace
-
-# Configure OpenTelemetry with sensible defaults.
-uptrace.configure_opentelemetry(
-    # Set dsn or UPTRACE_DSN env var.
-    dsn="",
-    service_name="myservice",
-    service_version="1.0.0",
-)
-
-# Create a tracer. Usually, tracer is a global variable.
-tracer = trace.get_tracer("app_or_package_name", "1.0.0")
-
-# Create a root span (a trace) to measure some operation.
-with tracer.start_as_current_span("main-operation") as main:
-    with tracer.start_as_current_span("GET /posts/:id") as child1:
-        child1.set_attribute("http.method", "GET")
-        child1.set_attribute("http.route", "/posts/:id")
-        child1.set_attribute("http.url", "http://localhost:8080/posts/123")
-        child1.set_attribute("http.status_code", 200)
-        child1.record_exception(ValueError("error1"))
-
-    with tracer.start_as_current_span("SELECT") as child2:
-        child2.set_attribute("db.system", "mysql")
-        child2.set_attribute("db.statement", "SELECT * FROM posts LIMIT 100")
-
-    print("trace:", uptrace.trace_url(main))
-
-# Send buffered spans and free resources.
-uptrace.shutdown()
-```
-
-## Links
-
-- [Examples](example)
 - [Documentation](https://uptrace.dev/get/opentelemetry-python.html)
-- [OpenTelemetry instrumentations](https://uptrace.dev/opentelemetry/instrumentations/?lang=python)
+- [Examples](example)
+- [OpenTelemetry Python instrumentations](https://uptrace.dev/opentelemetry/instrumentations/?lang=python)
 - [OpenTelemetry Django](https://uptrace.dev/opentelemetry/instrumentations/python-django.html)
 - [OpenTelemetry Flask](https://uptrace.dev/opentelemetry/instrumentations/python-flask.html)
 - [OpenTelemetry FastAPI](https://uptrace.dev/opentelemetry/instrumentations/python-fastapi.html)

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import logging
+
 import uptrace
 from opentelemetry import trace
 
@@ -26,6 +28,8 @@ with tracer.start_as_current_span("main-operation") as main:
     with tracer.start_as_current_span("SELECT") as child2:
         child2.set_attribute("db.system", "mysql")
         child2.set_attribute("db.statement", "SELECT * FROM posts LIMIT 100")
+
+    logging.error("Jackdaws love my big sphinx of quartz.")
 
     print("trace:", uptrace.trace_url(main))
 

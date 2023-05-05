@@ -1,5 +1,9 @@
 # Changelog
 
+## v.17.1 - 2023-05-05
+
+- Enabled OpenTelemetry Logs.
+
 ## v.17.0 - 2023-03-28
 
 - Updated Opentelemetry to

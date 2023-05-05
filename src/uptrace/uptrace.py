@@ -3,40 +3,19 @@ import os
 from socket import gethostname
 from typing import Optional
 
-import grpc
-from opentelemetry import metrics, trace
-from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
-    OTLPMetricExporter,
-)
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
-    OTLPSpanExporter,
-)
-from opentelemetry.sdk import metrics as sdkmetrics
-from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.sdk.metrics.export import (
-    AggregationTemporality,
-    PeriodicExportingMetricReader,
-)
+from opentelemetry import _logs, metrics, trace
 from opentelemetry.sdk.resources import Attributes, Resource
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 from .client import Client
-from .id_generator import UptraceIdGenerator
-from .dsn import DSN, parse_dsn
+from .dsn import parse_dsn
+from .logs import configure_logs
+from .metrics import configure_metrics
+from .traces import configure_traces
 
 logger = logging.getLogger(__name__)
 
 _CLIENT = Client(parse_dsn("https://<token>@uptrace.dev/<project_id>"))
 
-temporality_delta = {
-    sdkmetrics.Counter: AggregationTemporality.DELTA,
-    sdkmetrics.UpDownCounter: AggregationTemporality.DELTA,
-    sdkmetrics.Histogram: AggregationTemporality.DELTA,
-    sdkmetrics.ObservableCounter: AggregationTemporality.DELTA,
-    sdkmetrics.ObservableUpDownCounter: AggregationTemporality.DELTA,
-    sdkmetrics.ObservableGauge: AggregationTemporality.DELTA,
-}
 
 # pylint: disable=too-many-arguments
 def configure_opentelemetry(
@@ -46,6 +25,7 @@ def configure_opentelemetry(
     deployment_environment: Optional[str] = "",
     resource_attributes: Optional[Attributes] = None,
     resource: Optional[Resource] = None,
+    logging_level=logging.NOTSET,
 ):
     """
     configure_opentelemetry configures OpenTelemetry to export data to Uptrace.
@@ -59,7 +39,9 @@ def configure_opentelemetry(
     global _CLIENT  # pylint: disable=global-statement
 
     if os.getenv("UPTRACE_DISABLED") == "True":
+        logger.info("UPTRACE_DISABLED=True: Uptrace is disabled")
         return
+
     if not dsn:
         dsn = os.getenv("UPTRACE_DSN", "")
 
@@ -67,11 +49,11 @@ def configure_opentelemetry(
         dsn = parse_dsn(dsn)
     except ValueError as exc:
         # pylint:disable=logging-not-lazy
-        logger.warning("invalid Uptrace DSN: %s (Uptrace is disabled)", exc)
+        logger.warning("can't parse Uptrace DSN: %s (Uptrace is disabled)", exc)
         return
 
     if dsn.token == "<token>" or dsn.project_id == "<project_id>":
-        logger.warning("dummy DSN detected: %s (Uptrace is disabled)", dsn)
+        logger.warning("dummy Uptrace DSN detected: %s (Uptrace is disabled)", dsn)
         return
 
     if dsn.port == "14318":
@@ -88,58 +70,21 @@ def configure_opentelemetry(
     )
 
     _CLIENT = Client(dsn=dsn)
-    _configure_tracing(dsn, resource=resource)
-    _configure_metrics(dsn, resource=resource)
-
-
-def _configure_tracing(
-    dsn: DSN,
-    resource: Optional[Resource] = None,
-):
-    provider = TracerProvider(resource=resource, id_generator=UptraceIdGenerator())
-    trace.set_tracer_provider(provider)
-
-    credentials = grpc.ssl_channel_credentials()
-    exporter = OTLPSpanExporter(
-        endpoint=dsn.otlp_grpc_addr,
-        credentials=credentials,
-        headers=(("uptrace-dsn", dsn.str),),
-        timeout=5,
-        compression=grpc.Compression.Gzip,
-    )
-
-    bsp = BatchSpanProcessor(
-        exporter,
-        max_queue_size=1000,
-        max_export_batch_size=1000,
-        schedule_delay_millis=5000,
-    )
-    trace.get_tracer_provider().add_span_processor(bsp)
-
-
-def _configure_metrics(
-    dsn: DSN,
-    resource: Optional[Resource] = None,
-):
-    exporter = OTLPMetricExporter(
-        endpoint=f"{dsn.otlp_grpc_addr}",
-        headers=(("uptrace-dsn", dsn.str),),
-        timeout=5,
-        compression=grpc.Compression.Gzip,
-        preferred_temporality=temporality_delta,
-    )
-    reader = PeriodicExportingMetricReader(exporter)
-    provider = MeterProvider(metric_readers=[reader], resource=resource)
-    metrics.set_meter_provider(provider)
+    configure_traces(dsn, resource=resource)
+    configure_metrics(dsn, resource=resource)
+    configure_logs(dsn, resource=resource, level=logging_level)
 
 
 def shutdown():
     trace.get_tracer_provider().shutdown()
+    metrics.get_meter_provider().shutdown()
+    _logs.get_logger_provider().shutdown()
 
 
 def force_flush():
     trace.get_tracer_provider().force_flush()
     metrics.get_meter_provider().force_flush()
+    _logs.get_logger_provider().force_flush()
 
 
 def trace_url(span: Optional[trace.Span] = None) -> str:
