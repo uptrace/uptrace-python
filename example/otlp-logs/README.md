@@ -1,4 +1,4 @@
-# Using OTLP logs exporter with Uptrace
+# Configuring OTLP logs exporter for Uptrace
 
 This example shows how to configure
 [OTLP](https://opentelemetry-python.readthedocs.io/en/latest/exporter/otlp/otlp.html) to export logs

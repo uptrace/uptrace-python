@@ -9,6 +9,7 @@ from opentelemetry.sdk.metrics.export import (
     AggregationTemporality,
     PeriodicExportingMetricReader,
 )
+from opentelemetry.sdk.metrics.view import ExponentialBucketHistogramAggregation
 from opentelemetry.sdk.resources import Resource
 
 from .dsn import DSN
@@ -33,6 +34,9 @@ def configure_metrics(
         timeout=5,
         compression=grpc.Compression.Gzip,
         preferred_temporality=temporality_delta,
+        preferred_aggregation={
+            sdkmetrics.Histogram: ExponentialBucketHistogramAggregation()
+        },
     )
     reader = PeriodicExportingMetricReader(exporter)
     provider = MeterProvider(metric_readers=[reader], resource=resource)
