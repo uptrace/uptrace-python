@@ -10,8 +10,13 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Run:
+To run this example, you need to
+[create an Uptrace project](https://uptrace.dev/get/get-started.html) and pass your project DSN via
+`UPTRACE_DSN` env variable:
 
 ```go
 UPTRACE_DSN=https://<token>@api.uptrace.dev/<project_id> ./main.py
 ```
+
+To view metrics, open [app.uptrace.dev](https://app.uptrace.dev/) and navigate to the Metrics ->
+Explore tab.
