@@ -1,38 +1,46 @@
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 
 from .util import remove_prefix
 
 
 class DSN:
     # pylint:disable=too-many-arguments
-    def __init__(self, dsn="", scheme="", host="", port="", project_id="", token=""):
+    def __init__(
+        self, dsn="", scheme="", host="", http_port="", grpc_port="", token=""
+    ):
         self.str = dsn
         self.scheme = scheme
         self.host = host
-        self.port = port
-        self.project_id = project_id
+        self.http_port = http_port
+        self.grpc_port = grpc_port
         self.token = token
 
     def __str__(self):
         return self.str
 
     @property
-    def app_addr(self):
+    def site_url(self):
         if self.host == "uptrace.dev":
-            return f"{self.scheme}://app.uptrace.dev"
-        return f"{self.scheme}://{self.host}:14318"
+            return "https://app.uptrace.dev"
+        if self.http_port:
+            return f"{self.scheme}://{self.host}:{self.http_port}"
+        return f"{self.scheme}://{self.host}"
 
     @property
-    def otlp_http_addr(self):
+    def otlp_http_endpoint(self):
         if self.host == "uptrace.dev":
             return "https://otlp.uptrace.dev"
-        return f"{self.scheme}://{self.host}:{self.port}"
+        if self.http_port:
+            return f"{self.scheme}://{self.host}:{self.http_port}"
+        return f"{self.scheme}://{self.host}"
 
     @property
-    def otlp_grpc_addr(self):
+    def otlp_grpc_endpoint(self):
         if self.host == "uptrace.dev":
             return "https://otlp.uptrace.dev:4317"
-        return f"{self.scheme}://{self.host}:{self.port}"
+        if self.grpc_port:
+            return f"{self.scheme}://{self.host}:{self.grpc_port}"
+        return f"{self.scheme}://{self.host}"
 
 
 def parse_dsn(dsn: str) -> DSN:
@@ -49,17 +57,18 @@ def parse_dsn(dsn: str) -> DSN:
     if host == "api.uptrace.dev":
         host = "uptrace.dev"
 
-    if host != "uptrace.dev":
-        return DSN(dsn=dsn, scheme=o.scheme, host=host, port=o.port)
-
-    project_id = remove_prefix(o.path, "/")
     token = o.username
+    grpc_port = "14317"
+    if o.query:
+        query = parse_qs(o.query)
+        if "grpc" in query:
+            grpc_port = query["grpc"][0]
 
     return DSN(
         dsn=dsn,
         scheme=o.scheme,
         host=host,
-        port=o.port,
-        project_id=project_id,
+        http_port=o.port,
+        grpc_port=grpc_port,
         token=token,
     )

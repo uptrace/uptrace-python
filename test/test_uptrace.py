@@ -36,10 +36,16 @@ def test_trace_url():
 
 def test_dsn():
     dsn = uptrace.parse_dsn("http://localhost:14318")
-    assert dsn.app_addr == "http://localhost:14318"
-    assert dsn.otlp_http_addr == "http://localhost:14318"
-    assert dsn.otlp_grpc_addr == "http://localhost:14318"
+    assert dsn.site_url == "http://localhost:14318"
+    assert dsn.otlp_http_endpoint == "http://localhost:14318"
+    assert dsn.otlp_grpc_endpoint == "http://localhost:14317"
+
+    dsn = uptrace.parse_dsn("https://localhost?grpc=123")
+    assert dsn.site_url == "https://localhost"
+    assert dsn.otlp_http_endpoint == "https://localhost"
+    assert dsn.otlp_grpc_endpoint == "https://localhost:123"
 
     dsn = uptrace.parse_dsn("https://<token>@uptrace.dev/<project_id>")
-    assert dsn.app_addr == "https://app.uptrace.dev"
-    assert dsn.otlp_grpc_addr == "https://otlp.uptrace.dev:4317"
+    assert dsn.site_url == "https://app.uptrace.dev"
+    assert dsn.otlp_http_endpoint == "https://otlp.uptrace.dev"
+    assert dsn.otlp_grpc_endpoint == "https://otlp.uptrace.dev:4317"

@@ -29,7 +29,7 @@ def configure_metrics(
     resource: Resource,
 ):
     exporter = OTLPMetricExporter(
-        endpoint=dsn.otlp_grpc_addr,
+        endpoint=dsn.otlp_grpc_endpoint,
         headers=(("uptrace-dsn", dsn.str),),
         timeout=5,
         compression=grpc.Compression.Gzip,

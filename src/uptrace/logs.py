@@ -17,7 +17,7 @@ def configure_logs(dsn: DSN, resource: Resource, level=logging.NOTSET):
     set_logger_provider(logger_provider)
 
     exporter = OTLPLogExporter(
-        endpoint=dsn.otlp_grpc_addr,
+        endpoint=dsn.otlp_grpc_endpoint,
         headers=(("uptrace-dsn", dsn.str),),
         timeout=5,
         compression=grpc.Compression.Gzip,

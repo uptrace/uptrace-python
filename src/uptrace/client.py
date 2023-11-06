@@ -36,5 +36,7 @@ class Client:
     def trace_url(self, span: Optional[trace.Span] = None) -> str:
         if span is None:
             span = trace.get_current_span()
-        trace_id = span.get_span_context().trace_id
-        return f"{self._dsn.app_addr}/traces/{trace_id:0{32}x}"
+        span_ctx = span.get_span_context()
+        trace_id = span_ctx.trace_id
+        span_id = span_ctx.span_id
+        return f"{self._dsn.site_url}/traces/{trace_id:0{32}x}?span_id={span_id}"

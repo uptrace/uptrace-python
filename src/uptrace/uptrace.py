@@ -14,7 +14,7 @@ from .traces import configure_traces
 
 logger = logging.getLogger(__name__)
 
-_CLIENT = Client(parse_dsn("https://<token>@uptrace.dev/<project_id>"))
+_CLIENT = Client(parse_dsn("https://<token>@api.uptrace.dev"))
 
 
 # pylint: disable=too-many-arguments
@@ -52,11 +52,11 @@ def configure_opentelemetry(
         logger.warning("can't parse Uptrace DSN: %s (Uptrace is disabled)", exc)
         return
 
-    if dsn.token == "<token>" or dsn.project_id == "<project_id>":
+    if dsn.token == "<token>":
         logger.warning("dummy Uptrace DSN detected: %s (Uptrace is disabled)", dsn)
         return
 
-    if dsn.port == "14318":
+    if dsn.grpc_port == "14318":
         logger.warning(
             "uptrace-python uses OTLP/gRPC exporter, but got port %s", dsn.port
         )

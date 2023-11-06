@@ -19,7 +19,7 @@ def configure_traces(
     trace.set_tracer_provider(provider)
 
     exporter = OTLPSpanExporter(
-        endpoint=dsn.otlp_grpc_addr,
+        endpoint=dsn.otlp_grpc_endpoint,
         headers=(("uptrace-dsn", dsn.str),),
         timeout=5,
         compression=grpc.Compression.Gzip,
