@@ -9,7 +9,9 @@ from opentelemetry.sdk.metrics.export import (
     AggregationTemporality,
     PeriodicExportingMetricReader,
 )
-from opentelemetry.sdk.metrics.view import ExponentialBucketHistogramAggregation
+from opentelemetry.sdk.metrics.view import (
+    ExponentialBucketHistogramAggregation,
+)
 from opentelemetry.sdk.resources import Resource
 
 from .dsn import DSN

@@ -1,6 +1,4 @@
-from urllib.parse import urlparse, parse_qs
-
-from .util import remove_prefix
+from urllib.parse import parse_qs, urlparse
 
 
 class DSN:
