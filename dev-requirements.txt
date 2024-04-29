@@ -1,6 +1,6 @@
 wheel
 mypy
-black==24.3.0
+black==24.4.2
 pytest==8.1.1
 pylint==3.1.0
 nox
