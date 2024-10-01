@@ -3,6 +3,7 @@
 from typing import Optional
 
 from fastapi import FastAPI
+from opentelemetry import trace
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 import uptrace
 
@@ -19,9 +20,11 @@ FastAPIInstrumentor.instrument_app(app)
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    span = trace.get_current_span()
+    return {"Hello": "World", "trace_url": uptrace.trace_url(span)}
 
 
 @app.get("/items/{item_id}")
 async def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+    span = trace.get_current_span()
+    return {"item_id": item_id, "q": q, "trace_url": uptrace.trace_url(span)}
