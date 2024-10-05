@@ -2,7 +2,7 @@ wheel
 mypy
 black==24.4.2
 pytest==8.3.3
-pylint==3.2.5
+pylint==3.3.1
 nox
 isort
 twine
