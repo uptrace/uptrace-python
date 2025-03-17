@@ -47,5 +47,5 @@ def test_dsn():
 
     dsn = uptrace.parse_dsn("https://<token>@uptrace.dev/<project_id>")
     assert dsn.site_url == "https://app.uptrace.dev"
-    assert dsn.otlp_http_endpoint == "https://otlp.uptrace.dev"
-    assert dsn.otlp_grpc_endpoint == "https://otlp.uptrace.dev:4317"
+    assert dsn.otlp_http_endpoint == "https://api.uptrace.dev"
+    assert dsn.otlp_grpc_endpoint == "https://api.uptrace.dev:4317"

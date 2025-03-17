@@ -27,7 +27,7 @@ class DSN:
     @property
     def otlp_http_endpoint(self):
         if self.host == "uptrace.dev":
-            return "https://otlp.uptrace.dev"
+            return "https://api.uptrace.dev"
         if self.http_port:
             return f"{self.scheme}://{self.host}:{self.http_port}"
         return f"{self.scheme}://{self.host}"
@@ -35,7 +35,7 @@ class DSN:
     @property
     def otlp_grpc_endpoint(self):
         if self.host == "uptrace.dev":
-            return "https://otlp.uptrace.dev:4317"
+            return "https://api.uptrace.dev:4317"
         if self.grpc_port:
             return f"{self.scheme}://{self.host}:{self.grpc_port}"
         return f"{self.scheme}://{self.host}"
