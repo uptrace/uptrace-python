@@ -1,11 +1,11 @@
 # Uptrace for Python
 
 ![build workflow](https://github.com/uptrace/uptrace-python/actions/workflows/build.yml/badge.svg)
-[![Documentation](https://img.shields.io/badge/uptrace-documentation-informational)](https://uptrace.dev/get/uptrace-python.html)
+[![Documentation](https://img.shields.io/badge/uptrace-documentation-informational)](https://uptrace.dev/get/opentelemetry-python)
 [![Chat](https://img.shields.io/badge/-telegram-red?color=white&logo=telegram&logoColor=black)](https://t.me/uptrace)
 
 <a href="https://uptrace.dev/get/opentelemetry-python">
-  <img src="https://uptrace.dev/_ipx/_/devicon/python-original.svg" height="200px" />
+  <img src="https://uptrace.dev/devicon/python-original.svg" height="200px" />
 </a>
 
 ## Introduction
