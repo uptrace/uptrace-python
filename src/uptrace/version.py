@@ -1,3 +1,3 @@
 """Uptrace distro version"""
 
-__version__ = "1.37.0"
+__version__ = "1.39.0"
