@@ -8,7 +8,7 @@ def test(session):
     session.run("pytest", external=True)
 
 
-@session(python=["3.10"], reuse_venv=True)
+@session(python=["3.11", "3.12"], reuse_venv=True)
 def lint(session):
     session.install(".")
     session.install("-r", "dev-requirements.txt")
