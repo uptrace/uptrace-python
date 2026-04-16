@@ -7,7 +7,6 @@ Make sure you have the required tools installed:
 ```shell
 source .venv/bin/activate
 make deps
-pip install twine
 ```
 
 ## Steps
@@ -32,7 +31,7 @@ The version should match the OpenTelemetry SDK version (e.g. `1.40.0`).
 
 ### 3. Update dependencies
 
-Update OpenTelemetry dependency versions in `setup.cfg` to match the new version.
+Update OpenTelemetry dependency versions in `pyproject.toml` to match the new version.
 
 Update `requirements.txt` in each `example/` directory to use the new dependency versions.
 
