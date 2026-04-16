@@ -12,5 +12,5 @@ test:
 
 release: test
 	rm -rf build dist
-	python setup.py sdist bdist_wheel
+	python -m build
 	twine upload --skip-existing --verbose dist/*
