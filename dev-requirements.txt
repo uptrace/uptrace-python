@@ -6,4 +6,5 @@ pylint==4.0.5
 nox
 isort
 twine
-setuptools
+build
+hatchling
