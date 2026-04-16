@@ -6,7 +6,7 @@ Make sure you have the required tools installed:
 
 ```shell
 source .venv/bin/activate
-make deps
+make install
 ```
 
 ## Steps
@@ -35,10 +35,16 @@ Update OpenTelemetry dependency versions in `pyproject.toml` to match the new ve
 
 Update `requirements.txt` in each `example/` directory to use the new dependency versions.
 
+Then reinstall dependencies:
+
+```shell
+make install
+```
+
 ### 4. Build and publish to PyPI
 
 ```shell
-make release
+make publish
 ```
 
 This runs tests, builds the sdist and wheel, and uploads them to PyPI via `twine`.

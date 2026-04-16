@@ -1,6 +1,6 @@
 .PHONY: all test
 
-deps:
+install:
 	pip install -r dev-requirements.txt
 	pip install .
 
@@ -10,7 +10,7 @@ lint:
 test:
 	nox -s test-3.12
 
-release: test
+publish: test
 	rm -rf build dist
 	python -m build
 	twine upload --skip-existing --verbose dist/*
