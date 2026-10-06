@@ -5,7 +5,8 @@ from opentelemetry._logs import set_logger_provider
 from opentelemetry.exporter.otlp.proto.grpc._log_exporter import (
     OTLPLogExporter,
 )
-from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.instrumentation.logging.handler import LoggingHandler
+from opentelemetry.sdk._logs import LoggerProvider
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
 
@@ -24,5 +25,7 @@ def configure_logs(dsn: DSN, resource: Resource, level=logging.NOTSET):
     )
     logger_provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
 
-    handler = LoggingHandler(level=level, logger_provider=logger_provider)
+    handler = LoggingHandler(
+        level=level, logger_provider=logger_provider, log_code_attributes=True
+    )
     logging.getLogger().addHandler(handler)
