@@ -1,3 +1,4 @@
 uptrace==1.45.0
-pyramid==2.0.2
+pyramid==2.1
 opentelemetry-instrumentation-pyramid==0.66b0
+opentelemetry-instrumentation-logging==0.66b0

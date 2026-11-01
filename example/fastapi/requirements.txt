@@ -4,3 +4,4 @@ requests
 opentelemetry-instrumentation-fastapi==0.66b0
 opentelemetry-instrumentation-requests==0.66b0
 uptrace==1.45.0
+opentelemetry-instrumentation-logging==0.66b0
