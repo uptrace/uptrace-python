@@ -20,7 +20,9 @@ FlaskInstrumentor().instrument_app(app)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
 db = SQLAlchemy(app)
-SQLAlchemyInstrumentor().instrument(engine=db.engine)
+# Flask-SQLAlchemy 3.x requires an app context to access db.engine.
+with app.app_context():
+    SQLAlchemyInstrumentor().instrument(engine=db.engine)
 
 
 @app.route("/")
