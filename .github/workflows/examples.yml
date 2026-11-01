@@ -1,0 +1,74 @@
+name: examples
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+    # Weekly, to catch breakage from new releases of unpinned dependencies.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    name: versions in sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: python scripts/sync_examples.py --check
+
+  list:
+    name: list examples
+    runs-on: ubuntu-latest
+    outputs:
+      examples: ${{ steps.list.outputs.examples }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: list
+        run: |
+          echo "examples=$(python3 scripts/run_example.py --list | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().split()))')" >> "$GITHUB_OUTPUT"
+
+  run:
+    name: ${{ matrix.example }}
+    needs: list
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        example: ${{ fromJSON(needs.list.outputs.examples) }}
+
+    services:
+      # Only django-postgresql uses it; starting it for every job is cheap.
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: uptrace
+          POSTGRES_PASSWORD: uptrace
+          POSTGRES_DB: uptrace
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: python scripts/run_example.py --install ${{ matrix.example }}
+
+      - name: Run example
+        run: python scripts/run_example.py ${{ matrix.example }}

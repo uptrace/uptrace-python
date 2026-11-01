@@ -26,6 +26,13 @@ def test_span_processor_invalid_dsn(caplog):
     assert "can't parse DSN=invalid" in caplog.text
 
 
+def test_shutdown_when_disabled():
+    trace._TRACER_PROVIDER = None
+    uptrace.configure_opentelemetry()
+    uptrace.force_flush()
+    uptrace.shutdown()
+
+
 def test_trace_url():
     tracer = trace.get_tracer("tracer_name")
     span = tracer.start_span("main span")

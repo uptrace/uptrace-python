@@ -27,7 +27,7 @@ trace.set_tracer_provider(tracer_provider)
 exporter = OTLPSpanExporter(
     endpoint="https://otlp.uptrace.dev/v1/traces",
     # Set the Uptrace dsn here or use UPTRACE_DSN env var.
-    headers=(("uptrace-dsn", dsn),),
+    headers={"uptrace-dsn": dsn},
     timeout=10,
     compression=Compression.Gzip,
 )
