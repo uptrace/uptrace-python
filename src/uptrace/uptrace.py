@@ -76,9 +76,15 @@ def configure_opentelemetry(
 
 
 def shutdown():
-    trace.get_tracer_provider().shutdown()
-    metrics.get_meter_provider().shutdown()
-    _logs.get_logger_provider().shutdown()
+    # When Uptrace is disabled (e.g. no DSN), the global providers are no-op
+    # proxies that don't have shutdown().
+    for provider in (
+        trace.get_tracer_provider(),
+        metrics.get_meter_provider(),
+        _logs.get_logger_provider(),
+    ):
+        if hasattr(provider, "shutdown"):
+            provider.shutdown()
 
 
 def force_flush():
