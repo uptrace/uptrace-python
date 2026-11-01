@@ -9,3 +9,17 @@ updates:
     directory: /
     schedule:
       interval: weekly
+  - package-ecosystem: pip
+    directories:
+      - /example/*
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    # uptrace and OpenTelemetry pins are bumped on release by scripts/sync_examples.py.
+    ignore:
+      - dependency-name: uptrace
+      - dependency-name: opentelemetry-*
+    groups:
+      examples:
+        patterns:
+          - '*'

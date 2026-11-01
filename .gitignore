@@ -5,3 +5,4 @@ __pycache__
 *.pyc
 *.egg-info
 db.sqlite3
+.venv-examples/

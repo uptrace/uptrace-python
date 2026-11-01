@@ -43,7 +43,18 @@ Also check `requires-python` against the upstream packages (e.g. OpenTelemetry 1
 Python >= 3.10) and update the classifiers accordingly.
 
 Update `requirements.txt` in each `example/` directory to use the new versions (`uptrace`,
-`opentelemetry-sdk`, `opentelemetry-exporter-otlp`, and `opentelemetry-instrumentation-*`).
+`opentelemetry-sdk`, `opentelemetry-exporter-otlp`, and `opentelemetry-instrumentation-*`):
+
+```shell
+python scripts/sync_examples.py
+```
+
+CI runs `python scripts/sync_examples.py --check` and smoke-tests every example (see
+`.github/workflows/examples.yml`). To run one example locally:
+
+```shell
+python scripts/run_example.py --install flask && python scripts/run_example.py flask
+```
 
 Then reinstall dependencies and check that nothing is left on the old versions:
 
