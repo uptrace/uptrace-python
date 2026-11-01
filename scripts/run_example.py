@@ -118,12 +118,13 @@ def install(name):
     args = [PY, "-m", "pip", "install"]
     if uses_uptrace:
         args.append(str(ROOT))
-    if other:
-        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+    with tempfile.NamedTemporaryFile("w", suffix=".txt") as f:
+        if other:
             f.write("\n".join(other) + "\n")
-        args += ["-r", f.name]
-    print("+", " ".join(args), flush=True)
-    subprocess.run(args, check=True)
+            f.flush()
+            args += ["-r", f.name]
+        print("+", " ".join(args), flush=True)
+        subprocess.run(args, check=True)
 
 
 def start(cmd, cwd, log):
@@ -132,30 +133,37 @@ def start(cmd, cwd, log):
     # even when its virtualenv is not activated.
     env = dict(os.environ)
     env["PATH"] = os.pathsep.join([str(Path(PY).parent), env.get("PATH", "")])
-    return subprocess.Popen(
-        cmd,
-        cwd=cwd,
-        env=env,
-        stdout=log,
-        stderr=subprocess.STDOUT,
-        stdin=subprocess.DEVNULL,
-        start_new_session=True,
-    )
+    try:
+        return subprocess.Popen(
+            cmd,
+            cwd=cwd,
+            env=env,
+            stdout=log,
+            stderr=subprocess.STDOUT,
+            stdin=subprocess.DEVNULL,
+            start_new_session=True,
+        )
+    except OSError as exc:
+        raise Failure(f"can't start {cmd[0]}: {exc}") from exc
 
 
 def stop(proc):
-    if proc.poll() is not None:
+    # Signal the whole process group: the leader may already be gone while its
+    # children (reloaders, workers) are still running.
+    try:
+        os.killpg(proc.pid, signal.SIGINT)
+    except ProcessLookupError:
         return
-    for sig, wait in ((signal.SIGINT, 10), (signal.SIGKILL, 5)):
-        try:
-            os.killpg(proc.pid, sig)
-        except ProcessLookupError:
-            return
-        try:
-            proc.wait(wait)
-            return
-        except subprocess.TimeoutExpired:
-            pass
+    try:
+        proc.wait(10)
+    except subprocess.TimeoutExpired:
+        pass
+    # Kill whatever survived SIGINT, e.g. workers of an already exited leader.
+    try:
+        os.killpg(proc.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    proc.wait()
 
 
 def run_to_completion(cmd, cwd, log, timeout=SCRIPT_TIMEOUT):
@@ -163,7 +171,6 @@ def run_to_completion(cmd, cwd, log, timeout=SCRIPT_TIMEOUT):
     try:
         code = proc.wait(timeout)
     except subprocess.TimeoutExpired:
-        stop(proc)
         raise Failure(f"{cmd[-1]} did not exit within {timeout}s")
     finally:
         stop(proc)
@@ -232,6 +239,8 @@ def run(name):
                             status = http_get(url)
                         except urllib.error.HTTPError as exc:
                             status = exc.code
+                        except (urllib.error.URLError, OSError) as exc:
+                            raise Failure(f"GET {url} failed: {exc}") from exc
                         print(f"GET {url} -> {status}", flush=True)
                         if status != 200:
                             raise Failure(f"GET {url} returned {status}")

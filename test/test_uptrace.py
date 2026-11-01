@@ -29,6 +29,7 @@ def test_span_processor_invalid_dsn(caplog):
 def test_shutdown_when_disabled():
     trace._TRACER_PROVIDER = None
     uptrace.configure_opentelemetry()
+    uptrace.force_flush()
     uptrace.shutdown()
 
 
